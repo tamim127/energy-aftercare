@@ -8,13 +8,13 @@ interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 export function FormInput({ label, required, className, ...props }: FormFieldProps) {
   return (
     <div className={className}>
-      <label className="block text-xs tracking-editorial uppercase text-black/50 mb-2">
-        {label} {required && <span className="text-black/30">*</span>}
+      <label className="block text-xs tracking-editorial uppercase text-foreground/40 mb-2">
+        {label} {required && <span className="text-foreground/25">*</span>}
       </label>
       <input
         {...props}
         required={required}
-        className="w-full bg-transparent border-b border-black/20 focus:border-black py-3 text-sm text-black outline-none transition-colors placeholder:text-black/20"
+        className="w-full bg-transparent border-b border-foreground/15 focus:border-foreground py-3 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/20"
       />
     </div>
   );
@@ -28,14 +28,14 @@ interface FormTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> 
 export function FormTextarea({ label, required, className, ...props }: FormTextareaProps) {
   return (
     <div className={className}>
-      <label className="block text-xs tracking-editorial uppercase text-black/50 mb-2">
-        {label} {required && <span className="text-black/30">*</span>}
+      <label className="block text-xs tracking-editorial uppercase text-foreground/40 mb-2">
+        {label} {required && <span className="text-foreground/25">*</span>}
       </label>
       <textarea
         {...props}
         required={required}
         rows={4}
-        className="w-full bg-transparent border-b border-black/20 focus:border-black py-3 text-sm text-black outline-none transition-colors resize-none placeholder:text-black/20"
+        className="w-full bg-transparent border-b border-foreground/15 focus:border-foreground py-3 text-sm text-foreground outline-none transition-colors resize-none placeholder:text-foreground/20"
       />
     </div>
   );
@@ -50,13 +50,13 @@ interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 export function FormSelect({ label, required, options, className, ...props }: FormSelectProps) {
   return (
     <div className={className}>
-      <label className="block text-xs tracking-editorial uppercase text-black/50 mb-2">
-        {label} {required && <span className="text-black/30">*</span>}
+      <label className="block text-xs tracking-editorial uppercase text-foreground/40 mb-2">
+        {label} {required && <span className="text-foreground/25">*</span>}
       </label>
       <select
         {...props}
         required={required}
-        className="w-full bg-transparent border-b border-black/20 focus:border-black py-3 text-sm text-black outline-none transition-colors appearance-none cursor-pointer"
+        className="w-full bg-transparent border-b border-foreground/15 focus:border-foreground py-3 text-sm text-foreground outline-none transition-colors appearance-none cursor-pointer"
       >
         <option value="">Select...</option>
         {options.map((o) => (
@@ -79,10 +79,10 @@ interface FormFileProps {
 export function FormFile({ label, required, accept, multiple, onChange, className }: FormFileProps) {
   return (
     <div className={className}>
-      <label className="block text-xs tracking-editorial uppercase text-black/50 mb-2">
-        {label} {required && <span className="text-black/30">*</span>}
+      <label className="block text-xs tracking-editorial uppercase text-foreground/40 mb-2">
+        {label} {required && <span className="text-foreground/25">*</span>}
       </label>
-      <div className="border border-dashed border-black/20 hover:border-black/40 p-6 text-center transition-colors cursor-pointer relative">
+      <div className="border border-dashed border-foreground/15 hover:border-foreground/30 p-6 text-center transition-colors cursor-pointer relative">
         <input
           type="file"
           accept={accept}
@@ -90,7 +90,7 @@ export function FormFile({ label, required, accept, multiple, onChange, classNam
           onChange={(e) => onChange(e.target.files)}
           className="absolute inset-0 opacity-0 cursor-pointer"
         />
-        <p className="text-xs text-black/40">Click to upload{accept ? ` (${accept})` : ''}</p>
+        <p className="text-xs text-foreground/30">Click to upload{accept ? ` (${accept})` : ''}</p>
       </div>
     </div>
   );
@@ -108,16 +108,16 @@ interface FormRadioProps {
 export function FormRadio({ label, required, options, value, onChange, className }: FormRadioProps) {
   return (
     <div className={className}>
-      <label className="block text-xs tracking-editorial uppercase text-black/50 mb-3">
-        {label} {required && <span className="text-black/30">*</span>}
+      <label className="block text-xs tracking-editorial uppercase text-foreground/40 mb-3">
+        {label} {required && <span className="text-foreground/25">*</span>}
       </label>
       <div className="flex gap-6">
         {options.map((o) => (
           <label key={o.value} className="flex items-center gap-2 cursor-pointer group">
-            <div className={`w-4 h-4 border ${value === o.value ? 'border-black bg-black' : 'border-black/30'} flex items-center justify-center transition-colors`}>
-              {value === o.value && <div className="w-2 h-2 bg-white" />}
+            <div className={`w-4 h-4 border ${value === o.value ? 'border-foreground bg-foreground' : 'border-foreground/25'} flex items-center justify-center transition-colors`}>
+              {value === o.value && <div className="w-2 h-2 bg-background" />}
             </div>
-            <span className="text-sm text-black/70 group-hover:text-black transition-colors">{o.label}</span>
+            <span className="text-sm text-foreground/60 group-hover:text-foreground transition-colors">{o.label}</span>
             <input type="radio" value={o.value} checked={value === o.value} onChange={() => onChange(o.value)} className="sr-only" />
           </label>
         ))}
@@ -136,12 +136,12 @@ interface FormCheckboxProps {
 
 export function FormCheckbox({ label, required, checked, onChange, className }: FormCheckboxProps) {
   return (
-    <label className={`flex items-start gap-3 cursor-pointer group ${className}`}>
-      <div className={`w-4 h-4 border mt-0.5 flex-shrink-0 ${checked ? 'border-black bg-black' : 'border-black/30'} flex items-center justify-center transition-colors`}>
-        {checked && <div className="w-2 h-2 bg-white" />}
+    <label className={`flex items-start gap-3 cursor-pointer group ${className || ''}`}>
+      <div className={`w-4 h-4 border mt-0.5 flex-shrink-0 ${checked ? 'border-foreground bg-foreground' : 'border-foreground/25'} flex items-center justify-center transition-colors`}>
+        {checked && <div className="w-2 h-2 bg-background" />}
       </div>
-      <span className="text-xs text-black/60 leading-relaxed group-hover:text-black transition-colors">
-        {label} {required && <span className="text-black/30">*</span>}
+      <span className="text-xs text-foreground/50 leading-relaxed group-hover:text-foreground transition-colors">
+        {label} {required && <span className="text-foreground/25">*</span>}
       </span>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
     </label>

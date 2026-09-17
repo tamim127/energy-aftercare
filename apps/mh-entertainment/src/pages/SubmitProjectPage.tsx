@@ -127,7 +127,7 @@ export default function SubmitProjectPage() {
             onChange={(v) => set('represented', v)}
           />
           {data.represented === 'yes' && (
-            <div className="grid md:grid-cols-2 gap-6 pl-6 border-l border-black/10">
+            <div className="grid md:grid-cols-2 gap-6 pl-6 border-l border-foreground/10">
               <FormInput label="Company / Label Name" value={data.companyName || ''} onChange={e => set('companyName', e.target.value)} />
               <FormInput label="Contact Person" value={data.contactPerson || ''} onChange={e => set('contactPerson', e.target.value)} />
               <FormInput label="Website" value={data.companyWebsite || ''} onChange={e => set('companyWebsite', e.target.value)} />
@@ -136,7 +136,7 @@ export default function SubmitProjectPage() {
               </div>
             </div>
           )}
-          <div className="space-y-4 pt-4 border-t border-black/10">
+          <div className="space-y-4 pt-4 border-t border-foreground/10">
             <FormCheckbox
               label="I confirm that the information provided is accurate and that I have the necessary rights and permissions to submit this project to MH Entertainment."
               required

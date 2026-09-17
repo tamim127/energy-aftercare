@@ -86,10 +86,10 @@ export default function TVSubmissionPage() {
             <FormInput label="Video Format" value={data.videoFormat || ''} onChange={e => set('videoFormat', e.target.value)} placeholder="e.g. MP4, MOV" />
             <FormInput label="Video Resolution" value={data.resolution || ''} onChange={e => set('resolution', e.target.value)} placeholder="e.g. 1080p, 4K" />
           </div>
-          <div className="pt-6 border-t border-black/10 space-y-6">
+          <div className="pt-6 border-t border-foreground/10 space-y-6">
             <FormRadio label="Is the video already broadcast on television?" options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} value={data.onTV} onChange={v => set('onTV', v)} />
             {data.onTV === 'yes' && (
-              <div className="grid md:grid-cols-2 gap-6 pl-6 border-l border-black/10">
+              <div className="grid md:grid-cols-2 gap-6 pl-6 border-l border-foreground/10">
                 <FormInput label="TV Channel(s)" value={data.tvChannels || ''} onChange={e => set('tvChannels', e.target.value)} />
                 <FormInput label="Country / Territory" value={data.tvCountry || ''} onChange={e => set('tvCountry', e.target.value)} />
                 <FormInput label="Broadcast Date" type="date" value={data.broadcastDate || ''} onChange={e => set('broadcastDate', e.target.value)} />
@@ -124,7 +124,7 @@ export default function TVSubmissionPage() {
           <FormTextarea label="Artist Biography" value={data.biography || ''} onChange={e => set('biography', e.target.value)} />
           <FormTextarea label="Director's Statement" value={data.directorStatement || ''} onChange={e => set('directorStatement', e.target.value)} />
           <FormTextarea label="Additional Information" value={data.additionalInfo || ''} onChange={e => set('additionalInfo', e.target.value)} />
-          <div className="space-y-4 pt-6 border-t border-black/10">
+          <div className="space-y-4 pt-6 border-t border-foreground/10">
             <FormCheckbox label="I confirm that I have the necessary rights and permissions to submit this music video for television and media consideration." required checked={data.consent} onChange={v => set('consent', v)} />
             <FormCheckbox label="I authorize MH Entertainment to contact me regarding television, media, and promotional opportunities." checked={data.newsletter} onChange={v => set('newsletter', v)} />
           </div>

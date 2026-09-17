@@ -77,7 +77,7 @@ export default function RadioSubmissionPage() {
         <div className="space-y-6">
           <FormRadio label="Is this single already available on radio?" options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} value={data.onRadio} onChange={v => set('onRadio', v)} />
           {data.onRadio === 'yes' && (
-            <div className="grid md:grid-cols-2 gap-6 pl-6 border-l border-black/10">
+            <div className="grid md:grid-cols-2 gap-6 pl-6 border-l border-foreground/10">
               <FormInput label="Previous Radio Stations / Networks" value={data.prevRadio || ''} onChange={e => set('prevRadio', e.target.value)} />
               <FormInput label="Countries" value={data.radioCountries || ''} onChange={e => set('radioCountries', e.target.value)} />
               <div className="md:col-span-2"><FormTextarea label="Broadcast Information" value={data.broadcastInfo || ''} onChange={e => set('broadcastInfo', e.target.value)} /></div>
@@ -86,7 +86,7 @@ export default function RadioSubmissionPage() {
           <FormInput label="Target Countries" value={data.targetCountries || ''} onChange={e => set('targetCountries', e.target.value)} />
           <FormInput label="Target Radio Stations" value={data.targetRadio || ''} onChange={e => set('targetRadio', e.target.value)} />
           <FormInput label="Desired Radio Campaign Start Date" type="date" value={data.campaignDate || ''} onChange={e => set('campaignDate', e.target.value)} />
-          <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-black/10">
+          <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-foreground/10">
             <FormInput label="Streaming Link" value={data.streamingLink || ''} onChange={e => set('streamingLink', e.target.value)} />
             <FormInput label="Spotify Link" value={data.spotifyLink || ''} onChange={e => set('spotifyLink', e.target.value)} />
             <FormInput label="Apple Music Link" value={data.appleMusicLink || ''} onChange={e => set('appleMusicLink', e.target.value)} />
@@ -117,7 +117,7 @@ export default function RadioSubmissionPage() {
           <FormTextarea label="Artist Biography" value={data.biography || ''} onChange={e => set('biography', e.target.value)} />
           <FormTextarea label="Single Description" value={data.singleDescription || ''} onChange={e => set('singleDescription', e.target.value)} />
           <FormTextarea label="Additional Promotion Information" value={data.promoInfo || ''} onChange={e => set('promoInfo', e.target.value)} />
-          <div className="space-y-4 pt-6 border-t border-black/10">
+          <div className="space-y-4 pt-6 border-t border-foreground/10">
             <FormCheckbox label="I confirm that I own or control the necessary rights to submit this recording for radio consideration." required checked={data.consent} onChange={v => set('consent', v)} />
             <FormCheckbox label="I would like MH Entertainment to contact me regarding radio promotion opportunities." checked={data.newsletter} onChange={v => set('newsletter', v)} />
           </div>

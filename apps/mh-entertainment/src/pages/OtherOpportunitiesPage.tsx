@@ -74,7 +74,7 @@ export default function OtherOpportunitiesPage() {
           <FormFile label="Upload Press Kit / EPK" accept=".pdf,.doc,.docx,.zip" onChange={f => set('pressKit', f)} />
           <FormFile label="Upload Additional Documents" multiple onChange={f => set('additionalDocs', f)} />
           <FormTextarea label="Message / Additional Information" value={data.message || ''} onChange={e => set('message', e.target.value)} />
-          <div className="pt-6 border-t border-black/10">
+          <div className="pt-6 border-t border-foreground/10">
             <FormCheckbox
               label="I confirm that the information submitted is accurate and that I have the necessary rights to submit the materials provided."
               required
