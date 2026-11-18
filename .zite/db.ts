@@ -12,12 +12,13 @@
 //     operators: contains, not, in, notIn, lt, lte, gt, gte
 //       `not: null` means "is set". An empty `in: []` matches nothing; an
 //       empty `notIn: []` applies no filter.
-//     sort is currently IGNORED here — it is stripped before the request.
-//       (it does work on zite.auth.findAllUsers). Order in SQL instead.
+//     sort: [{ field: "fieldName", direction: "asc" | "desc" }]
 //     limit defaults to 500, max 2000; offset is a row count (a number)
-//     a filter value of `undefined` is REJECTED (it would query unfiltered
-//       and match an arbitrary record). Check the value first.
+//     a filter value of `undefined` drops that filter and reads as if it weren't
+//       there. Check the value first: `{ owner: user?.id }` signed out reads every row.
 //   .findOne({ id?, filters?, fields? }) → T | undefined
+//     a filter value of `undefined`, or an `undefined` id with no filters, matches
+//       no record and returns undefined
 //   .create({ record }) → T
 //   .update({ id, record }) → { id: string, fields: Partial<T> }
 //   .delete({ id }) → { success: true, id: string }
@@ -113,26 +114,6 @@ export type SubmissionsRecordInput = {
   status: "New Submission" | "Under Review" | "More Information Required" | "Accepted" | "Not Selected" | "Contacted" | string | null;
   formData: string | null;
 };
-
-export interface NotificationLink {
-  path?: string;
-  params?: Record<string, string>;
-}
-
-export interface NotificationsCreateParams {
-  recipients: string[];
-  title: string;
-  body?: string;
-  link?: NotificationLink;
-  path?: string;
-  params?: Record<string, string>;
-  payload?: Record<string, unknown>;
-  idempotencyKey?: string;
-}
-
-export type NotificationsCreateResult =
-  | { created: number }
-  | { created: 0; preview: true; wouldCreate: number };
 
 export interface ZiteAuthUser {
   id: string;

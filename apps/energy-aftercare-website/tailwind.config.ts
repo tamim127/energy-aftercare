@@ -16,6 +16,13 @@ const tailwindConfig: Config = {
         mono: ['var(--font-mono)', ...defaultTheme.fontFamily.mono],
       },
       colors: {
+        'ea-green': 'hsl(var(--ea-green))',
+        'ea-black': 'hsl(var(--ea-black))',
+        'ea-grey': 'hsl(var(--ea-grey))',
+        'ea-white': 'hsl(var(--ea-white))',
+        'ea-ink': 'hsl(var(--ea-ink))',
+        'ea-ink2': 'hsl(var(--ea-ink-2))',
+        'ea-soft': 'hsl(var(--ea-soft))',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
