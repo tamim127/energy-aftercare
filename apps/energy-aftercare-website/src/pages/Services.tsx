@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Check, ArrowRight, Home as HomeIcon, Compass, Activity, Handshake, Award } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { servicesContent as c, servicePlanDetails } from '../content/services';
@@ -10,12 +9,6 @@ import { PlansGrid } from '../components/PlanCard';
 const tierOf = (name: string) => name.split(' ')[0].toLowerCase();
 const sectionIcons = [HomeIcon, Compass, Activity, Handshake, Award];
 
-const navItems = [
-  { id: 'plan-details', label: 'BOOK ONLINE' },
-  { id: c.advice.id, label: c.advice.heading },
-  ...c.sections.map((s) => ({ id: s.id, label: s.heading })),
-  { id: 'packages', label: supportPlansHeading },
-];
 
 function CheckList({ items, dark }: { items: string[]; dark?: boolean }) {
   return (
@@ -30,31 +23,11 @@ function CheckList({ items, dark }: { items: string[]; dark?: boolean }) {
   );
 }
 
-function SideNav() {
-  const [active, setActive] = useState(navItems[0].id);
-  useEffect(() => {
-    const obs = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)), { rootMargin: '-40% 0px -55% 0px' });
-    navItems.forEach((n) => { const el = document.getElementById(n.id); if (el) obs.observe(el); });
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <nav aria-label="On this page" className="sticky top-[76px] z-30 hidden border-b border-ea-grey/20 bg-ea-black/95 backdrop-blur lg:block">
-      <ul className="ea-container flex gap-1 overflow-x-auto py-3">
-        {navItems.map((n) => (
-          <li key={n.id}>
-            <a href={`#${n.id}`} className={cn('block whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors', active === n.id ? 'bg-ea-green text-ea-black' : 'text-ea-white hover:text-ea-green')}>{n.label}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
 
 export default function Services() {
   usePageMeta(c.meta.title, c.meta.description);
   return (
     <>
-      <SideNav />
       <Section tone="dark" id="plan-details">
         <div className="grid gap-6 md:grid-cols-2">
           {servicePlanDetails.map((p, i) => (
