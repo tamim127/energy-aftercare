@@ -16,7 +16,7 @@ export default function About() {
             <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight md:text-5xl">{c.origin.h1}</h1>
             {c.origin.paragraphs.map((p) => <p key={p} className="mt-6 text-lg text-ea-white/85">{p}</p>)}
           </Reveal>
-          <Reveal delay={0.1}><SiteImage slot="about-origin" ratio="landscape" alt="" /></Reveal>
+          <Reveal delay={0.1}><SiteImage slot="about-origin" ratio="wide" alt="" /></Reveal>
         </div>
       </section>
 

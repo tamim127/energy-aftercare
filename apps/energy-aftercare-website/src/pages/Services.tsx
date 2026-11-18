@@ -81,7 +81,7 @@ export default function Services() {
             <CheckList items={c.advice.list} />
             <BtnLink to="/#contact" className="mt-10 bg-ea-black text-ea-white hover:shadow-none">{c.advice.button} <ArrowRight className="h-4 w-4" /></BtnLink>
           </Reveal>
-          <Reveal delay={0.1}><SiteImage slot="services-advice" ratio="square" /></Reveal>
+          <Reveal delay={0.1}><SiteImage slot="services-advice" ratio="portrait" /></Reveal>
         </div>
       </Section>
 

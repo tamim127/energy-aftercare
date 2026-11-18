@@ -30,7 +30,7 @@ function Hero() {
             <BtnLink to="/installer-support" variant="outlineDark">{c.hero.secondaryCta}</BtnLink>
           </div>
         </Reveal>
-        <Reveal delay={0.15}><SiteImage slot="home-hero" ratio="portrait" className="mx-auto w-full max-w-[420px]" /></Reveal>
+        <Reveal delay={0.15}><SiteImage slot="home-hero" ratio="landscape" className="w-full" /></Reveal>
       </div>
     </section>
   );
