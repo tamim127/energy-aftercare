@@ -3,6 +3,7 @@ import { Search, Phone, Mail } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@project/components/ui/accordion';
 import { faqData } from '../content/faqData';
+import { useFAQs } from '../wix/cms';
 import { usePageMeta } from '../components/ui';
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -30,13 +31,14 @@ const linkify = (l: string) => {
 
 export default function FAQ() {
   usePageMeta(faqData.meta.title, faqData.meta.description);
+  const { data: categories = faqData.categories } = useFAQs();
   const [q, setQ] = useState('');
   const cats = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return faqData.categories
+    return categories
       .map((c) => ({ ...c, items: t ? c.items.filter((i) => (i.q + ' ' + i.a.join(' ')).toLowerCase().includes(t)) : c.items }))
       .filter((c) => c.items.length);
-  }, [q]);
+  }, [q, categories]);
 
   return (
     <div className="bg-ea-black text-ea-white">
@@ -50,7 +52,7 @@ export default function FAQ() {
       </div>
       <nav aria-label="FAQ categories" className="sticky top-[75px] z-20 border-y border-ea-grey/15 bg-ea-black/95 backdrop-blur">
         <ul className="ea-container flex gap-2 overflow-x-auto py-3 no-scrollbar">
-          {faqData.categories.map((c) => (
+          {categories.map((c) => (
             <li key={c.heading}><a href={`#${slug(c.heading)}`} className="block whitespace-nowrap rounded-full border border-ea-grey/30 px-4 py-2 text-xs font-bold tracking-wider hover:border-ea-green hover:text-ea-green">{c.heading}</a></li>
           ))}
         </ul>

@@ -30,12 +30,15 @@ import {
 import { cn } from '@project/components/lib/utils';
 import { btn, Reveal, usePageMeta } from '../components/ui';
 import { approvedInstallers, type ApprovedInstaller } from '../content/approvedInstallers';
+import { useApprovedInstallers } from '../wix/cms';
 
 export default function ApprovedInstallers() {
   usePageMeta(
     'Find Approved Solar & Battery Installers | Energy Aftercare',
     'Search our selective network of vetted, MCS-certified solar and battery installers across the UK. Enter your postcode to find local installers who cover your area.'
   );
+
+  const { data: installers = approvedInstallers } = useApprovedInstallers();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedService, setSelectedService] = useState('All');
@@ -61,7 +64,7 @@ export default function ApprovedInstallers() {
     const outcodeMatch = q.match(/^([A-Z]{1,2})\d?/);
     const outcodePrefix = outcodeMatch ? outcodeMatch[1] : '';
 
-    return approvedInstallers.filter((inst) => {
+    return installers.filter((inst) => {
       // 1. Service filter
       if (selectedService !== 'All' && !inst.services.includes(selectedService)) {
         return false;
@@ -87,7 +90,7 @@ export default function ApprovedInstallers() {
 
       return matchesPostcode || matchesCounty || matchesTown || matchesName;
     });
-  }, [searchQuery, selectedService]);
+  }, [searchQuery, selectedService, installers]);
 
   // Dynamically load Leaflet with 100% free OpenStreetMap tiles (No Watermark)
   useEffect(() => {

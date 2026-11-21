@@ -18,6 +18,7 @@ import {
 import { cn } from '@project/components/lib/utils';
 import { Calendar } from '@project/components/ui/calendar';
 import { plansLiveOrder, bookNowLabel } from '../content/plans';
+import { useSupportPlans } from '../wix/cms';
 import { FormField, TextAreaField } from '../components/FormField';
 import { btn, usePageMeta } from '../components/ui';
 import { createAppointmentBooking, createBookingCheckout } from '../wix/bookings';
@@ -43,7 +44,8 @@ const schema = z.object({
 
 export default function BookingCalendar() {
   const { slug } = useParams();
-  const plan = plansLiveOrder.find((p) => p.slug === slug);
+  const { data: plans = plansLiveOrder } = useSupportPlans();
+  const plan = plans.find((p) => p.slug === slug);
   usePageMeta(`${plan?.name ?? 'Book Online'} | Energy Aftercare`);
 
   const [date, setDate] = useState<Date>();

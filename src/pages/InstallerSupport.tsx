@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowRight, Handshake, Wrench, BookOpen, Smartphone, MessageSquare, TrendingUp, HeartHandshake, Gauge, MonitorSmartphone, BatteryCharging, Bug, Headset, Compass, Clock, Smile, BadgeCheck } from 'lucide-react';
 import { installerContent as c } from '../content/installer';
+import { usePageContent } from '../wix/cms';
 import { Section, Reveal, BtnLink, usePageMeta } from '../components/ui';
 import SiteImage from '../components/SiteImage';
 import InstallerForm from '../components/InstallerForm';
@@ -10,6 +11,7 @@ const remoteIcons = [Gauge, MonitorSmartphone, BatteryCharging, Bug, Headset, Co
 const themeIcons = [Clock, Smile, BadgeCheck];
 
 export default function InstallerSupport() {
+  const page = usePageContent('installer-support');
   usePageMeta(c.meta.title, c.meta.description);
   return (
     <>
@@ -20,14 +22,20 @@ export default function InstallerSupport() {
             <div className="mb-4 sm:mb-6 flex gap-2" aria-hidden="true">
               {themeIcons.map((I, i) => <span key={i} className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-ea-green/40 text-ea-green"><I className="h-5 w-5" /></span>)}
             </div>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.06] tracking-tight">{c.hero.h1}</h1>
-            <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-ea-white/85 md:text-xl leading-relaxed">{c.hero.body}</p>
-            <BtnLink to="#installer-inquiry-form" className="mt-8 sm:mt-10 w-full sm:w-auto text-center justify-center">{c.whiteLabel.button} <ArrowDown className="h-4 w-4" /></BtnLink>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.06] tracking-tight">
+              {page.heroHeading || c.hero.h1}
+            </h1>
+            <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-ea-white/85 md:text-xl leading-relaxed">
+              {page.heroBody || c.hero.body}
+            </p>
+            <BtnLink to="#installer-inquiry-form" className="mt-8 sm:mt-10 w-full sm:w-auto text-center justify-center">
+              {page.heroPrimaryCta || c.whiteLabel.button} <ArrowDown className="h-4 w-4" />
+            </BtnLink>
           </Reveal>
           <Reveal delay={0.12}>
             <div className="relative mx-auto max-w-[440px]">
               <div className="absolute -inset-3 rounded-[28px] border border-ea-green/30" aria-hidden="true" />
-              <SiteImage slot="installer-hero" ratio="portrait" />
+              <SiteImage slot="installer-hero" ratio="portrait" src={page.heroImage} />
             </div>
           </Reveal>
         </div>
@@ -50,15 +58,21 @@ export default function InstallerSupport() {
             );
           })}
         </ul>
-        <div className="mt-12"><BtnLink to="#installer-inquiry-form" className="bg-ea-black text-ea-white hover:shadow-none">{c.whiteLabel.button} <ArrowRight className="h-4 w-4" /></BtnLink></div>
+        <div className="mt-12"><BtnLink to="#installer-inquiry-form" className="bg-ea-black text-ea-white hover:shadow-none">{page.heroPrimaryCta || c.whiteLabel.button} <ArrowRight className="h-4 w-4" /></BtnLink></div>
       </Section>
 
       <Section tone="dark">
         <div className="grid items-center gap-14 lg:grid-cols-2">
-          <Reveal><SiteImage slot="installer-remote" ratio="landscape" /></Reveal>
+          <Reveal>
+            <SiteImage slot="installer-remote" ratio="landscape" src={page.secondaryImage} />
+          </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">{c.remote.heading}</h2>
-            <p className="mt-6 text-lg text-ea-white/85">{c.remote.body}</p>
+            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">
+              {page.section2Heading || c.remote.heading}
+            </h2>
+            <p className="mt-6 text-lg text-ea-white/85">
+              {page.section2Body || c.remote.body}
+            </p>
           </Reveal>
         </div>
         <h3 className="mb-6 mt-16 text-sm font-bold uppercase tracking-[0.18em] text-ea-green">{c.remote.listHeading}</h3>

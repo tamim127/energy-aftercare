@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, ShieldCheck, CheckCircle2, Clock } from 'lucide-react';
 import { bookOnlineContent as c } from '../content/bookOnline';
 import { plansLiveOrder } from '../content/plans';
+import { useSupportPlans } from '../wix/cms';
 import { PlanCard } from '../components/PlanCard';
 import { Reveal, usePageMeta } from '../components/ui';
 
@@ -10,6 +11,8 @@ export default function BookOnline() {
     c.meta.title,
     'Book an engineer visit for your solar or battery system. Choose from our Bronze, Silver, Gold, or Platinum support plans with full on-site testing and certification.'
   );
+
+  const { data: plans = plansLiveOrder } = useSupportPlans();
 
   return (
     <div className="bg-ea-black text-ea-white">
@@ -52,7 +55,7 @@ export default function BookOnline() {
       <section className="py-14 md:py-20">
         <div className="ea-container">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
-            {plansLiveOrder.map((p, i) => (
+            {plans.map((p, i) => (
               <Reveal key={p.slug} delay={i * 0.06} className="h-full">
                 <PlanCard plan={p} large />
               </Reveal>

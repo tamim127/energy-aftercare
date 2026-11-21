@@ -1,6 +1,7 @@
 import { ArrowRight, Factory, Wrench } from 'lucide-react';
 import { manufacturerContent as m, approvedInstallersContent as a } from '../content/newPages';
 import { approvedInstallers } from '../content/approvedInstallers';
+import { usePageContent } from '../wix/cms';
 import { Section, Reveal, Card, BtnLink, usePageMeta } from '../components/ui';
 
 function Page({ heading, intro, blocks, Icon, cta, to, ctaText, children }: {
@@ -37,8 +38,22 @@ function Page({ heading, intro, blocks, Icon, cta, to, ctaText, children }: {
 }
 
 export function ManufacturerSupport() {
+  const page = usePageContent('manufacturer-support');
   usePageMeta(m.meta.title, m.meta.description);
-  return <Page heading={m.heading} intro={m.intro} blocks={m.blocks} Icon={Factory} cta={m.ctaButton} ctaText={m.ctaText} to="/#contact" />;
+
+  const blocks = page.heroBody ? page.heroBody.split('\n\n').filter(Boolean) : m.blocks;
+
+  return (
+    <Page
+      heading={page.heroHeading || m.heading}
+      intro={page.heroSubheading || m.intro}
+      blocks={blocks}
+      Icon={Factory}
+      cta={page.ctaButtonText || m.ctaButton}
+      ctaText={page.ctaHeading || m.ctaText}
+      to="/#contact"
+    />
+  );
 }
 
 export { default as ApprovedInstallers } from './ApprovedInstallers';

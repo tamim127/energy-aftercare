@@ -21,6 +21,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@project/components/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@project/components/ui/dropdown-menu';
 import { nav, logInLabel, contact, type NavItem } from '../content/site';
+import { useSiteSettings } from '../wix/cms';
 import Logo from './Logo';
 import LoginModal from './LoginModal';
 import { useMember } from '../hooks/useMember';
@@ -206,6 +207,8 @@ export default function Header() {
   const [mobile, setMobile] = useState(false);
   const [login, setLogin] = useState(false);
   const { member, loggedIn, logout } = useMember();
+  const { data: settings } = useSiteSettings();
+  const siteContact = settings || contact;
   const location = useLocation();
 
   useEffect(() => {
@@ -446,14 +449,14 @@ export default function Header() {
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <a
-                          href={contact.phoneHref}
+                          href={siteContact.phoneHref}
                           className="flex items-center justify-center gap-2 rounded-xl border border-ea-grey/25 bg-ea-black/60 p-2.5 text-xs font-bold text-ea-white hover:text-ea-green hover:border-ea-green transition-colors"
                         >
                           <Phone className="h-3.5 w-3.5 text-ea-green shrink-0" />
-                          <span className="truncate">07943 812137</span>
+                          <span className="truncate">{siteContact.phone}</span>
                         </a>
                         <a
-                          href={`mailto:${contact.email}`}
+                          href={`mailto:${siteContact.email}`}
                           className="flex items-center justify-center gap-2 rounded-xl border border-ea-grey/25 bg-ea-black/60 p-2.5 text-xs font-bold text-ea-white hover:text-ea-green hover:border-ea-green transition-colors"
                         >
                           <Mail className="h-3.5 w-3.5 text-ea-green shrink-0" />

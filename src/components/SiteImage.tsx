@@ -24,13 +24,16 @@ export default function SiteImage({
   ratio,
   alt = '',
   className,
+  src: propSrc,
 }: {
   slot: string;
   ratio: keyof typeof ratios;
   alt?: string;
   className?: string;
+  src?: string;
 }) {
-  const src = findSlot(slot);
+  const localSrc = findSlot(slot);
+  const src = propSrc || localSrc;
   return (
     <div
       data-slot={slot}

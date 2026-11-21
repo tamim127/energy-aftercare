@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Youtube, Linkedin, Mail, Phone, Music2 } from 'lucide-react';
 import { nav, contact, socials, copyright, copyrightLink } from '../content/site';
+import { useSiteSettings } from '../wix/cms';
 import { homeContent } from '../content/home';
 import Logo from './Logo';
 
@@ -19,6 +20,11 @@ const icons: Record<string, React.ReactNode> = {
 };
 
 export default function Footer() {
+  const { data: settings } = useSiteSettings();
+  const siteContact = settings || contact;
+  const siteSocials = settings?.socials?.length ? settings.socials : socials;
+  const siteCopyright = settings?.copyright || copyright;
+
   const links = nav.flatMap((n) => (n.label === 'Legal' ? n.children! : [{ label: n.label, to: n.to }, ...(n.children ?? [])]));
   return (
     <footer className="border-t border-ea-grey/15 bg-ea-black text-ea-white">
@@ -27,7 +33,7 @@ export default function Footer() {
           <Logo />
           <p className="mt-4 sm:mt-6 max-w-xs text-xs font-semibold tracking-[0.14em] text-ea-grey">{homeContent.contact.strap}</p>
           <div className="mt-4 sm:mt-6 flex flex-wrap gap-2">
-            {socials.map((s) => (
+            {siteSocials.map((s) => (
               <a key={s.name} href={s.href} target="_blank" rel="noreferrer" aria-label={s.name} className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-ea-grey/40 text-ea-grey transition-colors hover:border-ea-green hover:text-ea-green">
                 {icons[s.name]}
               </a>
@@ -45,14 +51,14 @@ export default function Footer() {
             </ul>
           </nav>
           <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
-            <a href={`mailto:${contact.email}`} className="flex items-center gap-3 hover:text-ea-green transition-colors truncate"><Mail className="h-4 w-4 text-ea-green shrink-0" />{contact.email}</a>
-            <a href={contact.phoneHref} className="flex items-center gap-3 hover:text-ea-green transition-colors"><Phone className="h-4 w-4 text-ea-green shrink-0" />{contact.phone}</a>
+            <a href={`mailto:${siteContact.email}`} className="flex items-center gap-3 hover:text-ea-green transition-colors truncate"><Mail className="h-4 w-4 text-ea-green shrink-0" />{siteContact.email}</a>
+            <a href={siteContact.phoneHref} className="flex items-center gap-3 hover:text-ea-green transition-colors"><Phone className="h-4 w-4 text-ea-green shrink-0" />{siteContact.phone}</a>
           </div>
         </div>
       </div>
       <div className="border-t border-ea-grey/15">
         <p className="ea-container py-5 sm:py-6 text-xs sm:text-sm text-ea-grey">
-          {copyright} • <Link to="/privacy-policy" className="hover:text-ea-green transition-colors">{copyrightLink}</Link>
+          {siteCopyright} • <Link to="/privacy-policy" className="hover:text-ea-green transition-colors">{copyrightLink}</Link>
         </p>
       </div>
     </footer>

@@ -3,6 +3,7 @@ import { Check, ArrowRight, Home as HomeIcon, Compass, Activity, Handshake, Awar
 import { cn } from '@project/components/lib/utils';
 import { servicesContent as c, servicePlanDetails } from '../content/services';
 import { plansAscending, supportPlansHeading } from '../content/plans';
+import { usePageContent } from '../wix/cms';
 import { Section, Reveal, Card, BtnLink, usePageMeta } from '../components/ui';
 import SiteImage from '../components/SiteImage';
 import { PlansGrid } from '../components/PlanCard';
@@ -26,6 +27,7 @@ function CheckList({ items, dark }: { items: string[]; dark?: boolean }) {
 
 
 export default function Services() {
+  const page = usePageContent('services');
   usePageMeta(c.meta.title, c.meta.description);
   return (
     <>
@@ -43,19 +45,27 @@ export default function Services() {
             </Reveal>
           ))}
         </div>
-        <div className="mt-10 text-center"><BtnLink to="/book-online">{c.bookOnlineButton} <ArrowRight className="h-4 w-4" /></BtnLink></div>
+        <div className="mt-10 text-center"><BtnLink to="/book-online">{page.heroSecondaryCta || c.bookOnlineButton} <ArrowRight className="h-4 w-4" /></BtnLink></div>
       </Section>
 
       <Section tone="light" id={c.advice.id}>
         <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-2">
           <Reveal>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">{c.advice.heading}</h2>
-            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-ea-black/80 leading-relaxed">{c.advice.body}</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+              {page.heroHeading || c.advice.heading}
+            </h2>
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-ea-black/80 leading-relaxed">
+              {page.heroBody || c.advice.body}
+            </p>
             <h3 className="mb-4 sm:mb-5 mt-8 sm:mt-10 text-lg sm:text-xl font-bold">{c.advice.listHeading}</h3>
             <CheckList items={c.advice.list} />
-            <BtnLink to="/#contact" className="mt-10 bg-ea-black text-ea-white hover:shadow-none">{c.advice.button} <ArrowRight className="h-4 w-4" /></BtnLink>
+            <BtnLink to="/#contact" className="mt-10 bg-ea-black text-ea-white hover:shadow-none">
+              {page.heroPrimaryCta || c.advice.button} <ArrowRight className="h-4 w-4" />
+            </BtnLink>
           </Reveal>
-          <Reveal delay={0.1}><SiteImage slot="services-advice" ratio="portrait" /></Reveal>
+          <Reveal delay={0.1}>
+            <SiteImage slot="services-advice" ratio="portrait" src={page.heroImage} />
+          </Reveal>
         </div>
       </Section>
 

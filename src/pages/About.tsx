@@ -1,22 +1,35 @@
 import { Sun, PlugZap, Settings2, Target, Users, ArrowRight } from 'lucide-react';
 import { aboutContent as c } from '../content/about';
+import { usePageContent } from '../wix/cms';
 import { Section, Reveal, Card, BtnLink, Eyebrow, usePageMeta } from '../components/ui';
 import SiteImage from '../components/SiteImage';
 
 const expIcons = [Sun, PlugZap, Settings2];
 
 export default function About() {
+  const page = usePageContent('about');
   usePageMeta(c.meta.title, c.meta.description);
+
+  const paragraphs = page.heroBody ? page.heroBody.split('\n\n').filter(Boolean) : c.origin.paragraphs;
+
   return (
     <>
       <section className="bg-ea-black text-ea-white">
         <div className="ea-container grid items-center gap-8 py-12 sm:py-20 md:py-28 lg:grid-cols-2">
           <Reveal>
-            <Eyebrow>{c.origin.eyebrow}</Eyebrow>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-[1.08] tracking-tight">{c.origin.h1}</h1>
-            {c.origin.paragraphs.map((p) => <p key={p} className="mt-4 sm:mt-6 text-base sm:text-lg text-ea-white/85 leading-relaxed">{p}</p>)}
+            <Eyebrow>{page.heroSubheading || c.origin.eyebrow}</Eyebrow>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-[1.08] tracking-tight">
+              {page.heroHeading || c.origin.h1}
+            </h1>
+            {paragraphs.map((p, idx) => (
+              <p key={idx} className="mt-4 sm:mt-6 text-base sm:text-lg text-ea-white/85 leading-relaxed">
+                {p}
+              </p>
+            ))}
           </Reveal>
-          <Reveal delay={0.1}><SiteImage slot="about-origin" ratio="wide" alt="" className="w-full" /></Reveal>
+          <Reveal delay={0.1}>
+            <SiteImage slot="about-origin" ratio="wide" alt="" className="w-full" src={page.heroImage} />
+          </Reveal>
         </div>
       </section>
 
@@ -24,9 +37,13 @@ export default function About() {
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl bg-ea-black p-6 sm:p-8 text-ea-white md:p-14">
             <div className="absolute left-0 top-0 h-full w-1.5 bg-ea-green" />
-            <Eyebrow>{c.mission.eyebrow}</Eyebrow>
-            <h2 className="max-w-3xl text-2xl sm:text-3xl font-extrabold tracking-tight md:text-5xl">{c.mission.heading}</h2>
-            <p className="mt-4 sm:mt-6 max-w-3xl text-base sm:text-lg text-ea-white/85 md:text-xl leading-relaxed">{c.mission.body}</p>
+            <Eyebrow>{page.section2Subheading || c.mission.eyebrow}</Eyebrow>
+            <h2 className="max-w-3xl text-2xl sm:text-3xl font-extrabold tracking-tight md:text-5xl">
+              {page.section2Heading || c.mission.heading}
+            </h2>
+            <p className="mt-4 sm:mt-6 max-w-3xl text-base sm:text-lg text-ea-white/85 md:text-xl leading-relaxed">
+              {page.section2Body || c.mission.body}
+            </p>
           </div>
         </Reveal>
         <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -47,8 +64,12 @@ export default function About() {
 
       <Section tone="dark">
         <Reveal>
-          <h2 className="max-w-3xl text-4xl font-extrabold tracking-tight md:text-5xl">{c.expertise.heading}</h2>
-          <p className="mt-6 max-w-3xl text-lg text-ea-white/80">{c.expertise.body}</p>
+          <h2 className="max-w-3xl text-4xl font-extrabold tracking-tight md:text-5xl">
+            {page.section3Heading || c.expertise.heading}
+          </h2>
+          <p className="mt-6 max-w-3xl text-lg text-ea-white/80">
+            {page.section3Body || c.expertise.body}
+          </p>
         </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {c.expertise.cards.map((card, i) => {
@@ -69,8 +90,12 @@ export default function About() {
 
       <section className="bg-ea-green text-ea-black">
         <div className="ea-container flex flex-col items-start justify-between gap-6 py-14 md:flex-row md:items-center">
-          <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">{c.cta.heading}</h2>
-          <BtnLink to="/#contact" className="bg-ea-black text-ea-white hover:shadow-none">{c.cta.button} <ArrowRight className="h-4 w-4" /></BtnLink>
+          <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+            {page.ctaHeading || c.cta.heading}
+          </h2>
+          <BtnLink to="/#contact" className="bg-ea-black text-ea-white hover:shadow-none">
+            {page.ctaButtonText || c.cta.button} <ArrowRight className="h-4 w-4" />
+          </BtnLink>
         </div>
       </section>
     </>

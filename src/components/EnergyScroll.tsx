@@ -11,11 +11,11 @@ const ITEMS = [
   { ...byTitle('EV Integration'), Icon: PlugZap },
 ];
 
-export default function EnergyScroll() {
+export default function EnergyScroll({ secondaryImage }: { secondaryImage?: string }) {
   return (
     <section className="bg-ea-black text-ea-white">
       <div className="ea-container grid items-center gap-12 py-20 lg:grid-cols-2">
-        <SiteImage slot="home-section2" ratio="square" alt="Home energy system" />
+        <SiteImage slot="home-section2" ratio="square" alt="Home energy system" src={secondaryImage} />
         <div className="space-y-6">
           {ITEMS.map(({ title, body, Icon }) => (
             <div key={title} className="flex gap-4">

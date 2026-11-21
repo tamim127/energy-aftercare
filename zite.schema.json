@@ -1,0 +1,165 @@
+{
+  "tables": [
+    {
+      "id": "tkdaTAGnSRS",
+      "sdkName": "submissions",
+      "name": "Submissions",
+      "primaryFieldId": "ftEgHe4CBSh",
+      "fields": [
+        {
+          "id": "ftEgHe4CBSh",
+          "sdkName": "projectName",
+          "definition": {
+            "name": "Project Name",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fc3GC7GbgSi",
+          "sdkName": "submissionType",
+          "definition": {
+            "name": "Submission Type",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "czS7",
+                  "label": "Submit My Project",
+                  "color": "purple"
+                },
+                {
+                  "value": "qWiX",
+                  "label": "Radio Single",
+                  "color": "orange"
+                },
+                {
+                  "value": "6EuE",
+                  "label": "TV Music Video",
+                  "color": "blue"
+                },
+                {
+                  "value": "qzAm",
+                  "label": "Other Opportunities",
+                  "color": "gray"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "ffVunk3USV1",
+          "sdkName": "submitterName",
+          "definition": {
+            "name": "Submitter Name",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "f8fuxFw8b76",
+          "sdkName": "email",
+          "definition": {
+            "name": "Email",
+            "type": "email",
+            "template": {}
+          }
+        },
+        {
+          "id": "f4SwXtaY2cc",
+          "sdkName": "artistName",
+          "definition": {
+            "name": "Artist Name",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "ff1YZ3p1oJ8",
+          "sdkName": "country",
+          "definition": {
+            "name": "Country",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fvufEzBqmjN",
+          "sdkName": "status",
+          "definition": {
+            "name": "Status",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "3RyW",
+                  "label": "New Submission",
+                  "color": "blue"
+                },
+                {
+                  "value": "sjsq",
+                  "label": "Under Review",
+                  "color": "orange"
+                },
+                {
+                  "value": "25c7",
+                  "label": "More Information Required",
+                  "color": "yellow"
+                },
+                {
+                  "value": "fF3s",
+                  "label": "Accepted",
+                  "color": "green"
+                },
+                {
+                  "value": "fu54",
+                  "label": "Not Selected",
+                  "color": "gray"
+                },
+                {
+                  "value": "7EuJ",
+                  "label": "Contacted",
+                  "color": "purple"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "foyxNexiQcV",
+          "sdkName": "formData",
+          "definition": {
+            "name": "Form Data",
+            "type": "long_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "f9bVBpANzVe",
+          "sdkName": "submittedAt",
+          "definition": {
+            "name": "Submitted At",
+            "type": "created_at",
+            "template": {
+              "timezone": "",
+              "dateFormat": "local",
+              "timeFormat": "12h",
+              "displayTimeZone": false
+            }
+          }
+        },
+        {
+          "id": "fkTthtrWYMT",
+          "sdkName": "submissionId",
+          "definition": {
+            "name": "Submission ID",
+            "type": "autonumber",
+            "template": {}
+          }
+        }
+      ]
+    }
+  ]
+}

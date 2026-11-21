@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand palette (HSL triples) */
+    --ea-green: 97 98% 76%;      /* #B5FE88 */
+    --ea-black: 0 0% 0%;         /* #000000 */
+    --ea-grey: 0 0% 65%;         /* #A6A6A6 */
+    --ea-white: 0 0% 100%;       /* #FFFFFF */
+    --ea-ink: 0 0% 4%;           /* #0B0B0B card surface */
+    --ea-ink-2: 0 0% 9%;         /* #161616 card surface */
+    --ea-soft: 0 0% 96%;         /* light alternate section */
+
+    /* Core colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 25%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 100%;
+    --border: 0 0% 65%;
+    --input: 0 0% 65%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 100%;
+    --primary: 97 98% 76%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 9%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 97 98% 76%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 97 98% 76%;
+
+    --radius: 0.875rem;
+
+    --chart-1: 97 98% 76%;
+    --chart-2: 0 0% 65%;
+    --chart-3: 0 0% 100%;
+    --chart-4: 0 0% 40%;
+    --chart-5: 0 0% 20%;
+
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 97 98% 76%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 9%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 97 98% 76%;
+
+    --font-sans: 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    --shadow-x: 0px;
+    --shadow-y: 1px;
+    --shadow-blur: 4px;
+    --shadow-spread: 0px;
+    --shadow-opacity: 0.2;
+    --shadow-color: #000000;
+    --shadow-2xs: var(--shadow-x) var(--shadow-y) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
+    --shadow-xs: var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
+    --shadow-sm: var(--shadow-x) var(--shadow-y) calc(var(--shadow-blur) * 1.5) var(--shadow-spread) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
+    --shadow-md: calc(var(--shadow-x) * 2) calc(var(--shadow-y) * 2) calc(var(--shadow-blur) * 3) calc(var(--shadow-spread) - 1px) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
+    --shadow-lg: calc(var(--shadow-x) * 4) calc(var(--shadow-y) * 4) calc(var(--shadow-blur) * 5) calc(var(--shadow-spread) - 3px) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
+    --shadow-xl: calc(var(--shadow-x) * 6) calc(var(--shadow-y) * 6) calc(var(--shadow-blur) * 7) calc(var(--shadow-spread) - 5px) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 100%), transparent);
+    --shadow-2xl: calc(var(--shadow-x) * 8) calc(var(--shadow-y) * 8) calc(max(0px, var(--shadow-blur) * 9 - 8px)) calc(var(--shadow-spread) - 12px) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 250%), transparent);
+    --shadow: var(--shadow-md);
+  }
+  .dark {}
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+  body {
+    @apply font-sans antialiased bg-ea-black text-foreground;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  :focus-visible {
+    outline: 2px solid hsl(var(--ea-green));
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .ea-container { @apply mx-auto w-full max-w-[1200px] px-5 sm:px-8; }
+  .ea-glow { transition: box-shadow .3s ease, border-color .3s ease, transform .3s ease; }
+  .ea-glow:hover { border-color: hsl(var(--ea-green)); box-shadow: 0 0 0 1px hsl(var(--ea-green) / .35), 0 12px 40px -12px hsl(var(--ea-green) / .45); }
+}
+
+@keyframes ea-flow { to { stroke-dashoffset: -40; } }
+.ea-flow { stroke-dasharray: 8 12; animation: ea-flow 1.2s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ea-flow { animation: none; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
