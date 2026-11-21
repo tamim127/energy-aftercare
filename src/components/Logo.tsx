@@ -15,13 +15,13 @@ export default function Logo({ className }: { className?: string }) {
   return (
     <Link
       to="/"
-      className={`inline-flex items-center transition-opacity hover:opacity-95 ${className || ''}`}
+      className={`inline-flex items-center transition-opacity hover:opacity-95 shrink-0 ${className || ''}`}
       aria-label="Energy Aftercare home"
     >
       <img
         src={logoWhite}
         alt="Energy Aftercare"
-        className="h-14 w-auto max-w-[180px] object-contain md:h-16 md:max-w-[220px]"
+        className="h-10 w-auto max-w-[145px] sm:h-12 sm:max-w-[180px] md:h-14 md:max-w-[210px] object-contain"
       />
     </Link>
   );

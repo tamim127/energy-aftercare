@@ -710,7 +710,7 @@ export default function Calculator() {
 
       {/* Main Body */}
       <main className="py-10 md:py-16">
-        <div className="ea-container max-w-5xl">
+        <div className="ea-container">
           {/* =================================================================
              STEP 1: CHOOSE PATH
              ================================================================= */}
@@ -1869,8 +1869,7 @@ export default function Calculator() {
                     </div>
                   </div>
                   <p className="text-[11px] text-ea-grey pt-2 border-t border-ea-grey/15">
-                    Assumptions: {regionInfo.name} irradiation, 0.5% yearly solar degradation, flat
-                    tariffs, and 0% VAT.
+                    *Independent guidance based on UK MCS market benchmark averages and {regionInfo.name} seasonal irradiation. Final Energy Aftercare proprietary scoring rules will follow separately.
                   </p>
                 </div>
 

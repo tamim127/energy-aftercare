@@ -47,11 +47,11 @@ export default function Services() {
       </Section>
 
       <Section tone="light" id={c.advice.id}>
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-2">
           <Reveal>
-            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">{c.advice.heading}</h2>
-            <p className="mt-6 text-lg text-ea-black/80">{c.advice.body}</p>
-            <h3 className="mb-5 mt-10 text-xl font-bold">{c.advice.listHeading}</h3>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">{c.advice.heading}</h2>
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-ea-black/80 leading-relaxed">{c.advice.body}</p>
+            <h3 className="mb-4 sm:mb-5 mt-8 sm:mt-10 text-lg sm:text-xl font-bold">{c.advice.listHeading}</h3>
             <CheckList items={c.advice.list} />
             <BtnLink to="/#contact" className="mt-10 bg-ea-black text-ea-white hover:shadow-none">{c.advice.button} <ArrowRight className="h-4 w-4" /></BtnLink>
           </Reveal>

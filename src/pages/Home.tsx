@@ -15,19 +15,19 @@ function Hero() {
   return (
     <section className="relative overflow-hidden bg-ea-black text-ea-white">
       <div className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-ea-green/10 blur-[120px]" />
-      <div className="ea-container relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.25fr_1fr]">
+      <div className="ea-container relative grid items-center gap-8 py-12 sm:py-20 md:py-28 lg:grid-cols-[1.25fr_1fr]">
         <Reveal>
           <Eyebrow>{c.hero.eyebrow}</Eyebrow>
-          <h1 className="text-[2.4rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-[4rem]">{c.hero.h1}</h1>
-          <p className="mt-6 max-w-xl text-lg text-ea-white/85">{c.hero.body}</p>
-          <ul className="mt-8 flex flex-wrap gap-2" aria-label="Trust badges">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold leading-[1.08] tracking-tight">{c.hero.h1}</h1>
+          <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-ea-white/85 leading-relaxed">{c.hero.body}</p>
+          <ul className="mt-6 sm:mt-8 flex flex-wrap gap-2" aria-label="Trust badges">
             {c.hero.badges.map((b) => (
-              <li key={b} className="rounded-full border border-ea-grey/40 px-3.5 py-1.5 text-sm font-medium"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ea-green align-middle" />{b}</li>
+              <li key={b} className="rounded-full border border-ea-grey/40 px-3 py-1 sm:px-3.5 sm:py-1.5 text-xs sm:text-sm font-medium"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ea-green align-middle" />{b}</li>
             ))}
           </ul>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <BtnLink to="/#contact">{c.hero.primaryCta} <ArrowRight className="h-4 w-4" /></BtnLink>
-            <BtnLink to="/about" variant="outlineDark">About Us</BtnLink>
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
+            <BtnLink to="/#contact" className="w-full sm:w-auto text-center justify-center">{c.hero.primaryCta} <ArrowRight className="h-4 w-4" /></BtnLink>
+            <BtnLink to="/about" variant="outlineDark" className="w-full sm:w-auto text-center justify-center">About Us</BtnLink>
           </div>
         </Reveal>
         <Reveal delay={0.15}><SiteImage slot="home-hero" ratio="landscape" className="w-full" /></Reveal>

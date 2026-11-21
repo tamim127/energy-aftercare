@@ -10,23 +10,23 @@ export default function About() {
   return (
     <>
       <section className="bg-ea-black text-ea-white">
-        <div className="ea-container grid items-center gap-12 py-20 md:py-28 lg:grid-cols-2">
+        <div className="ea-container grid items-center gap-8 py-12 sm:py-20 md:py-28 lg:grid-cols-2">
           <Reveal>
             <Eyebrow>{c.origin.eyebrow}</Eyebrow>
-            <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight md:text-5xl">{c.origin.h1}</h1>
-            {c.origin.paragraphs.map((p) => <p key={p} className="mt-6 text-lg text-ea-white/85">{p}</p>)}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-[1.08] tracking-tight">{c.origin.h1}</h1>
+            {c.origin.paragraphs.map((p) => <p key={p} className="mt-4 sm:mt-6 text-base sm:text-lg text-ea-white/85 leading-relaxed">{p}</p>)}
           </Reveal>
-          <Reveal delay={0.1}><SiteImage slot="about-origin" ratio="wide" alt="" /></Reveal>
+          <Reveal delay={0.1}><SiteImage slot="about-origin" ratio="wide" alt="" className="w-full" /></Reveal>
         </div>
       </section>
 
       <Section tone="light">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-ea-black p-8 text-ea-white md:p-14">
+          <div className="relative overflow-hidden rounded-3xl bg-ea-black p-6 sm:p-8 text-ea-white md:p-14">
             <div className="absolute left-0 top-0 h-full w-1.5 bg-ea-green" />
             <Eyebrow>{c.mission.eyebrow}</Eyebrow>
-            <h2 className="max-w-3xl text-3xl font-extrabold tracking-tight md:text-5xl">{c.mission.heading}</h2>
-            <p className="mt-6 max-w-3xl text-lg text-ea-white/85 md:text-xl">{c.mission.body}</p>
+            <h2 className="max-w-3xl text-2xl sm:text-3xl font-extrabold tracking-tight md:text-5xl">{c.mission.heading}</h2>
+            <p className="mt-4 sm:mt-6 max-w-3xl text-base sm:text-lg text-ea-white/85 md:text-xl leading-relaxed">{c.mission.body}</p>
           </div>
         </Reveal>
         <div className="mt-8 grid gap-6 md:grid-cols-2">

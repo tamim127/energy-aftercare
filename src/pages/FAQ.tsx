@@ -40,22 +40,22 @@ export default function FAQ() {
 
   return (
     <div className="bg-ea-black text-ea-white">
-      <div className="mx-auto max-w-[820px] px-5 pb-24 pt-16 sm:px-8 md:pt-24">
-        <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">{faqData.h1}</h1>
-        <div className="relative mt-8">
+      <div className="ea-container pb-12 sm:pb-20 pt-10 sm:pt-16 md:pt-24">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">{faqData.h1}</h1>
+        <div className="relative mt-6 sm:mt-8 max-w-2xl">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ea-grey" />
           <label htmlFor="faq-search" className="sr-only">Search</label>
-          <input id="faq-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search" className="h-14 w-full rounded-full border border-ea-grey/40 bg-ea-ink pl-12 pr-5 text-base outline-none focus:border-ea-green" />
+          <input id="faq-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search questions..." className="h-12 sm:h-14 w-full rounded-full border border-ea-grey/40 bg-ea-ink pl-12 pr-5 text-sm sm:text-base outline-none focus:border-ea-green" />
         </div>
       </div>
       <nav aria-label="FAQ categories" className="sticky top-[75px] z-20 border-y border-ea-grey/15 bg-ea-black/95 backdrop-blur">
-        <ul className="mx-auto flex max-w-[820px] gap-2 overflow-x-auto px-5 py-3 sm:px-8">
+        <ul className="ea-container flex gap-2 overflow-x-auto py-3 no-scrollbar">
           {faqData.categories.map((c) => (
             <li key={c.heading}><a href={`#${slug(c.heading)}`} className="block whitespace-nowrap rounded-full border border-ea-grey/30 px-4 py-2 text-xs font-bold tracking-wider hover:border-ea-green hover:text-ea-green">{c.heading}</a></li>
           ))}
         </ul>
       </nav>
-      <div className="mx-auto max-w-[820px] px-5 pb-20 pt-6 sm:px-8">
+      <div className="ea-container pb-20 pt-6">
         {cats.length === 0 && <p className="py-12 text-center text-ea-grey">—</p>}
         {cats.map((c) => (
           <section key={c.heading} id={slug(c.heading)} className="scroll-mt-40 pt-12">

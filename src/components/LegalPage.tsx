@@ -44,20 +44,20 @@ export default function LegalPage({ content }: { content: LegalContent }) {
   return (
     <div className="bg-ea-white text-ea-black">
       <header className="bg-ea-black text-ea-white">
-        <div className="ea-container py-16 md:py-20">
-          <h1 className="max-w-3xl text-3xl font-extrabold tracking-tight md:text-5xl">{content.title}</h1>
-          <p className="mt-4 inline-block rounded-full border border-ea-grey/40 px-4 py-1.5 text-sm">{content.lastUpdated}</p>
+        <div className="ea-container py-10 sm:py-16 md:py-20">
+          <h1 className="max-w-3xl text-2xl sm:text-3xl font-extrabold tracking-tight md:text-5xl">{content.title}</h1>
+          <p className="mt-3 sm:mt-4 inline-block rounded-full border border-ea-grey/40 px-3.5 py-1 text-xs sm:text-sm font-medium">{content.lastUpdated}</p>
         </div>
       </header>
 
-      <div className="sticky top-[75px] z-20 border-b border-ea-black/10 bg-ea-white px-5 py-3 lg:hidden">
+      <div className="sticky top-[72px] sm:top-[75px] z-20 border-b border-ea-black/10 bg-ea-white px-4 sm:px-5 py-2.5 sm:py-3 lg:hidden">
         <label htmlFor="toc-select" className="sr-only">Contents</label>
-        <select id="toc-select" value={active} onChange={(e) => document.getElementById(e.target.value)?.scrollIntoView({ behavior: 'smooth' })} className="h-12 w-full rounded-xl border border-ea-black/30 bg-ea-white px-3 text-sm font-semibold">
+        <select id="toc-select" value={active} onChange={(e) => document.getElementById(e.target.value)?.scrollIntoView({ behavior: 'smooth' })} className="h-11 sm:h-12 w-full rounded-xl border border-ea-black/30 bg-ea-white px-3 text-xs sm:text-sm font-semibold">
           {toc.map((t) => <option key={t.id} value={t.id}>{t.text}</option>)}
         </select>
       </div>
 
-      <div className="ea-container grid gap-12 py-12 lg:grid-cols-[280px_1fr] lg:py-16">
+      <div className="ea-container grid gap-8 sm:gap-12 py-8 sm:py-12 lg:grid-cols-[280px_1fr] lg:py-16">
         <nav aria-label="Contents" className="hidden lg:block">
           <ol className="sticky top-28 max-h-[calc(100vh-8rem)] space-y-1 overflow-y-auto border-l border-ea-black/10 text-sm">
             {toc.map((t) => (

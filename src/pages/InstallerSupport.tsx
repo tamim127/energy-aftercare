@@ -15,14 +15,14 @@ export default function InstallerSupport() {
     <>
       <section className="relative overflow-hidden bg-ea-black text-ea-white">
         <div className="pointer-events-none absolute -left-40 bottom-0 h-[500px] w-[500px] rounded-full bg-ea-green/10 blur-[130px]" />
-        <div className="ea-container relative grid items-center gap-12 py-20 md:py-28 lg:grid-cols-[1.2fr_1fr]">
+        <div className="ea-container relative grid items-center gap-8 sm:gap-12 py-12 sm:py-20 md:py-28 lg:grid-cols-[1.2fr_1fr]">
           <Reveal>
-            <div className="mb-6 flex gap-2" aria-hidden="true">
-              {themeIcons.map((I, i) => <span key={i} className="flex h-11 w-11 items-center justify-center rounded-full border border-ea-green/40 text-ea-green"><I className="h-5 w-5" /></span>)}
+            <div className="mb-4 sm:mb-6 flex gap-2" aria-hidden="true">
+              {themeIcons.map((I, i) => <span key={i} className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-ea-green/40 text-ea-green"><I className="h-5 w-5" /></span>)}
             </div>
-            <h1 className="text-[2.5rem] font-extrabold leading-[1.04] tracking-tight sm:text-6xl">{c.hero.h1}</h1>
-            <p className="mt-6 max-w-xl text-lg text-ea-white/85 md:text-xl">{c.hero.body}</p>
-            <BtnLink to="#installer-inquiry-form" className="mt-10">{c.whiteLabel.button} <ArrowDown className="h-4 w-4" /></BtnLink>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.06] tracking-tight">{c.hero.h1}</h1>
+            <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-ea-white/85 md:text-xl leading-relaxed">{c.hero.body}</p>
+            <BtnLink to="#installer-inquiry-form" className="mt-8 sm:mt-10 w-full sm:w-auto text-center justify-center">{c.whiteLabel.button} <ArrowDown className="h-4 w-4" /></BtnLink>
           </Reveal>
           <Reveal delay={0.12}>
             <div className="relative mx-auto max-w-[440px]">
