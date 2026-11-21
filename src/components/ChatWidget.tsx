@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@project/components/lib/utils';
 import { chatLabel, contact } from '../content/site';
 import { sendAIChatMessage, type ChatMessage } from '../wix/aiChat';
+import { useSiteSettings } from '../wix/cms';
 
 const INITIAL_MESSAGE: ChatMessage = {
   role: 'assistant',
@@ -32,6 +33,9 @@ const SUGGESTED_QUESTIONS = [
 ];
 
 export default function ChatWidget() {
+  const { data: siteSettings } = useSiteSettings();
+  const siteContact = siteSettings || contact;
+
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -77,7 +81,7 @@ export default function ChatWidget() {
         {
           role: 'assistant',
           content:
-            "I'm sorry, I encountered a temporary connection issue. You can call us directly on 07943 812137 or email admin@energyaftercare.co.uk.",
+            `I'm sorry, I encountered a temporary connection issue. You can call us directly on ${siteContact.phone} or email ${siteContact.email}.`,
         },
       ]);
     } finally {

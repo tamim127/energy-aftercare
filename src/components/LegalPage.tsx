@@ -62,7 +62,18 @@ export default function LegalPage({ content }: { content: LegalContent }) {
           <ol className="sticky top-28 max-h-[calc(100vh-8rem)] space-y-1 overflow-y-auto border-l border-ea-black/10 text-sm">
             {toc.map((t) => (
               <li key={t.id}>
-                <a href={`#${t.id}`} className={cn('-ml-px block border-l-2 py-1.5 pl-4 transition-colors', active === t.id ? 'border-ea-black font-bold text-ea-black' : 'border-transparent text-ea-black/70 hover:text-ea-black')}>{t.text}</a>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById(t.id)?.scrollIntoView({ behavior: 'smooth' })}
+                  className={cn(
+                    '-ml-px block text-left w-full border-l-2 py-1.5 pl-4 transition-colors cursor-pointer',
+                    active === t.id
+                      ? 'border-ea-black font-bold text-ea-black'
+                      : 'border-transparent text-ea-black/70 hover:text-ea-black'
+                  )}
+                >
+                  {t.text}
+                </button>
               </li>
             ))}
           </ol>

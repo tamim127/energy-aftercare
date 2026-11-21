@@ -1,6 +1,7 @@
 // Wix Bookings Integration for Energy Aftercare Headless Frontend
 import { wixFetch } from './sdk';
 import { ensureTokens } from './members/auth';
+import { submitInquiry } from './submissions';
 
 export interface WixServiceInfo {
   serviceId: string;
@@ -55,25 +56,27 @@ export interface CreateBookingResult {
  * expected by Wix APIs (e.g. +447987654321, +8801712345678, +14786362256).
  */
 export function normalizePhoneNumber(rawPhone: string): string {
-  let cleaned = rawPhone.trim();
+  const cleaned = rawPhone.trim();
   const hasPlus = cleaned.startsWith('+');
-  const digits = cleaned.replace(/\D/g, '');
+  let digits = cleaned.replace(/\D/g, '');
 
   if (!digits) return rawPhone;
 
-  // 1. If explicit leading + was provided, strip formatting and keep +
-  if (hasPlus) {
+  // 1. Bangladesh 11-digit mobile starting with 01 (017..., 016...)
+  if (digits.length === 11 && digits.startsWith('01')) {
+    return `+88${digits}`;
+  }
+
+  // 2. Bangladesh with 880 prefix but user entered 11 digits after 880 instead of 10 digits
+  // Example: 88016193952227 (14 digits) -> trim to 13 digits (+8801619395222)
+  if (digits.startsWith('880') && digits.length > 13) {
+    digits = digits.slice(0, 13);
     return `+${digits}`;
   }
 
-  // 2. If 00 prefix (e.g. 0044...), replace with +
-  if (digits.startsWith('00')) {
-    return `+${digits.slice(2)}`;
-  }
-
-  // 3. Bangladesh 11-digit mobile starting with 01 (017..., 018..., etc.)
-  if (digits.length === 11 && digits.startsWith('01')) {
-    return `+88${digits}`;
+  // 3. Bangladesh 880 standard 13 digits (+8801712345678)
+  if (digits.startsWith('880') && digits.length === 13) {
+    return `+${digits}`;
   }
 
   // 4. UK 11-digit mobile starting with 07 (07987...)
@@ -86,7 +89,12 @@ export function normalizePhoneNumber(rawPhone: string): string {
     return `+44${digits.slice(1)}`;
   }
 
-  // 6. Otherwise default with + prefix
+  // 6. Explicit leading + provided
+  if (hasPlus) {
+    return `+${digits}`;
+  }
+
+  // 7. Otherwise default with + prefix
   return `+${digits}`;
 }
 
@@ -116,8 +124,8 @@ export async function createAppointmentBooking(params: CreateBookingParams): Pro
     const endHour = String(Number(h) + 1).padStart(2, '0');
 
     // Slot start and end time in Europe/London (GMT)
-    const startDate = `${y}-${m}-${d}T${startHour}:${min}:00Z`;
-    const endDate = `${y}-${m}-${d}T${endHour}:${min}:00Z`;
+    const startDate = `${y}-${m}-${d}T${startHour}:${min}:00.000Z`;
+    const endDate = `${y}-${m}-${d}T${endHour}:${min}:00.000Z`;
 
     const normalizedPhone = normalizePhoneNumber(params.phone);
 
@@ -132,12 +140,25 @@ export async function createAppointmentBooking(params: CreateBookingParams): Pro
             timezone: 'Europe/London',
             resource: {
               id: STAFF_RESOURCE_ID,
+              name: 'Business Owner',
+              scheduleId: 'd00b70e1-ddd7-4bfc-8225-83e40c6c8e14',
             },
             location: {
+              id: '558262ef-2c2a-4293-bc92-ff29d2a45dcb',
+              name: 'Location 1',
               locationType: 'OWNER_BUSINESS',
             },
           },
+          title: serviceInfo.name,
+          tags: ['INDIVIDUAL'],
         },
+        contactDetails: {
+          firstName,
+          lastName,
+          email: params.email.trim(),
+          phone: normalizedPhone,
+        },
+        selectedPaymentOption: 'ONLINE',
         totalParticipants: 1,
       },
       formSubmission: {
@@ -149,6 +170,24 @@ export async function createAppointmentBooking(params: CreateBookingParams): Pro
       },
       participantNotification: { notifyParticipants: false },
     };
+
+    // Parallel synchronization: record booking inquiry in Inquiries CMS & CRM & fire email automation
+    submitInquiry({
+      name: trimmedName,
+      email: params.email.trim(),
+      phone: normalizedPhone,
+      type: 'Booking',
+      subject: `Support Plan Booking: ${serviceInfo.name}`,
+      message: `Requested Slot: ${y}-${m}-${d} at ${params.slot} (Europe/London)\nNotes: ${params.notes?.trim() || 'None'}`,
+      details: {
+        serviceId: serviceInfo.serviceId,
+        serviceName: serviceInfo.name,
+        date: `${y}-${m}-${d}`,
+        slot: params.slot,
+      },
+    }).catch((err) => {
+      console.warn('Booking inquiry sync non-blocking error:', err);
+    });
 
     const res = await wixFetch('/bookings/v2/bookings', {
       method: 'POST',
@@ -215,18 +254,16 @@ export async function createBookingCheckout(bookingId: string): Promise<CreateCh
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        checkout: {
-          channelType: 'WEB',
-          lineItems: [
-            {
-              catalogReference: {
-                appId: WIX_BOOKINGS_APP_ID,
-                catalogItemId: bookingId,
-              },
-              quantity: 1,
+        channelType: 'WEB',
+        lineItems: [
+          {
+            catalogReference: {
+              appId: WIX_BOOKINGS_APP_ID,
+              catalogItemId: bookingId,
             },
-          ],
-        },
+            quantity: 1,
+          },
+        ],
       }),
     });
 

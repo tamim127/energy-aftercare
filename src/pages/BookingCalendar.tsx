@@ -25,8 +25,8 @@ import { createAppointmentBooking, createBookingCheckout } from '../wix/bookings
 import { getMemberState, subscribeMember } from '../wix/members/member-store';
 import NotFound from './NotFound';
 
-// Front-end standard support hours (Monday–Friday, 9am–5pm UK).
-const SLOTS = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+// Front-end standard support hours (Monday–Friday, 10am–5pm UK).
+const SLOTS = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Name is required'),

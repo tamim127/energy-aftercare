@@ -26,11 +26,14 @@ import {
   Zap,
   Check,
   Send,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { btn, Reveal, usePageMeta } from '../components/ui';
 import { approvedInstallers, type ApprovedInstaller } from '../content/approvedInstallers';
 import { useApprovedInstallers } from '../wix/cms';
+import { submitInquiry } from '../wix/submissions';
 
 export default function ApprovedInstallers() {
   usePageMeta(
@@ -48,10 +51,52 @@ export default function ApprovedInstallers() {
   const [mapLoaded, setMapLoaded] = useState(false);
 
   // Quote Request State inside Modal
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [quoteRequested, setQuoteRequested] = useState(false);
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
+  const [clientPostcode, setClientPostcode] = useState('');
+  const [clientService, setClientService] = useState('Solar PV & Battery Storage');
+  const [clientNotes, setClientNotes] = useState('');
+  const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
+  const [quoteError, setQuoteError] = useState('');
+
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profileModal) return;
+    setIsSubmittingQuote(true);
+    setQuoteError('');
+    try {
+      const res = await submitInquiry({
+        name: clientName,
+        email: clientEmail,
+        phone: clientPhone,
+        type: 'InstallerQuote',
+        subject: `Quote Request for ${profileModal.name} (${clientPostcode || profileModal.baseLocation})`,
+        message: `Selected Installer: ${profileModal.name} (MCS: ${profileModal.mcsNumber})\nService Needed: ${clientService}\nPostcode/Town: ${clientPostcode}\nNotes: ${clientNotes || 'Requesting free quote and survey.'}`,
+        details: {
+          installerId: profileModal.id,
+          installerName: profileModal.name,
+          mcs: profileModal.mcsNumber,
+          baseLocation: profileModal.baseLocation,
+          service: clientService,
+          postcode: clientPostcode,
+          notes: clientNotes,
+        },
+      });
+
+      if (res.success) {
+        setQuoteRequested(true);
+      } else {
+        setQuoteError(res.error || 'Failed to submit quote request. Please try again.');
+      }
+    } catch (err: any) {
+      setQuoteError(err?.message || 'A network error occurred. Please try again.');
+    } finally {
+      setIsSubmittingQuote(false);
+    }
+  };
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -517,8 +562,23 @@ export default function ApprovedInstallers() {
                     <div className="mt-3 flex flex-wrap gap-2 text-xs">
                       <button
                         type="button"
-                        onClick={() => setProfileModal(selectedInstaller)}
-                        className="rounded-xl bg-ea-green px-4 py-2 font-bold text-ea-black hover:bg-ea-green/90 transition-colors flex items-center gap-1.5"
+                        onClick={() => {
+                          setProfileModal(selectedInstaller);
+                          setShowQuoteForm(true);
+                          setQuoteRequested(false);
+                          setQuoteError('');
+                        }}
+                        className="rounded-xl bg-ea-green px-4 py-2 font-bold text-ea-black hover:bg-ea-green/90 transition-colors flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,229,117,0.3)]"
+                      >
+                        <Send className="h-3.5 w-3.5" /> Request Free Quote
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProfileModal(selectedInstaller);
+                          setShowQuoteForm(false);
+                        }}
+                        className="rounded-xl border border-ea-grey/30 bg-ea-ink px-3.5 py-2 font-semibold text-ea-white hover:border-ea-green transition-colors flex items-center gap-1.5"
                       >
                         View Full Details <ExternalLink className="h-3.5 w-3.5" />
                       </button>
@@ -744,27 +804,185 @@ export default function ApprovedInstallers() {
               </div>
             </div>
 
+            {/* Interactive Quote Request Form in Profile */}
+            {showQuoteForm && (
+              <div className="rounded-2xl border border-ea-green/50 bg-ea-black/80 p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-ea-white flex items-center gap-1.5">
+                      <Send className="h-4 w-4 text-ea-green" /> Request a Free Quote from {profileModal.name}
+                    </h3>
+                    <p className="text-xs text-ea-grey mt-0.5">
+                      Your inquiry is protected by Energy Aftercare's quality and independent standards.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowQuoteForm(false)}
+                    className="text-xs text-ea-grey hover:text-ea-white underline"
+                  >
+                    Hide Form
+                  </button>
+                </div>
+
+                {quoteRequested ? (
+                  <div className="rounded-xl border border-ea-green/50 bg-ea-green/10 p-6 text-center space-y-2">
+                    <CheckCircle2 className="h-10 w-10 text-ea-green mx-auto" />
+                    <h4 className="text-base font-bold text-ea-white">Quote Request Submitted!</h4>
+                    <p className="text-xs text-ea-white/80 max-w-md mx-auto">
+                      Thank you, {clientName}! Your specification has been forwarded to {profileModal.name} and logged in your Energy Aftercare account. An advisor will contact you within one business day.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowQuoteForm(false);
+                        setQuoteRequested(false);
+                      }}
+                      className={cn(btn.outlineDark, 'py-2 px-5 text-xs font-bold mt-2')}
+                    >
+                      Done
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleQuoteSubmit} className="space-y-3">
+                    {quoteError && (
+                      <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-xs text-red-200 flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                        <span>{quoteError}</span>
+                      </div>
+                    )}
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="text-[11px] font-semibold text-ea-grey">Your Full Name *</label>
+                        <input
+                          type="text"
+                          required
+                          value={clientName}
+                          onChange={(e) => setClientName(e.target.value)}
+                          placeholder="e.g. David Williams"
+                          className="mt-1 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-3.5 py-2 text-xs text-ea-white focus:border-ea-green focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-ea-grey">Email Address *</label>
+                        <input
+                          type="email"
+                          required
+                          value={clientEmail}
+                          onChange={(e) => setClientEmail(e.target.value)}
+                          placeholder="david@example.com"
+                          className="mt-1 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-3.5 py-2 text-xs text-ea-white focus:border-ea-green focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-ea-grey">Phone Number *</label>
+                        <input
+                          type="tel"
+                          required
+                          value={clientPhone}
+                          onChange={(e) => setClientPhone(e.target.value)}
+                          placeholder="07123 456789"
+                          className="mt-1 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-3.5 py-2 text-xs text-ea-white focus:border-ea-green focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-ea-grey">Postcode / City</label>
+                        <input
+                          type="text"
+                          value={clientPostcode}
+                          onChange={(e) => setClientPostcode(e.target.value)}
+                          placeholder="e.g. BS1 4DJ"
+                          className="mt-1 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-3.5 py-2 text-xs text-ea-white focus:border-ea-green focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-ea-grey">Installation Service Needed</label>
+                      <select
+                        value={clientService}
+                        onChange={(e) => setClientService(e.target.value)}
+                        className="mt-1 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-3.5 py-2 text-xs text-ea-white focus:border-ea-green focus:outline-none"
+                      >
+                        <option>Solar PV & Battery Storage</option>
+                        <option>Solar PV Only</option>
+                        <option>Battery Storage Retrofit</option>
+                        <option>EV Charger Installation</option>
+                        <option>Heat Pump / Clean Heating</option>
+                        <option>Annual Maintenance & Inspection</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-ea-grey">Property / System Requirements</label>
+                      <textarea
+                        rows={2}
+                        value={clientNotes}
+                        onChange={(e) => setClientNotes(e.target.value)}
+                        placeholder="Tell the installer about your property (e.g. roof orientation, current energy bills, timeline)..."
+                        className="mt-1 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-3.5 py-2 text-xs text-ea-white focus:border-ea-green focus:outline-none resize-none"
+                      />
+                    </div>
+                    <div className="flex items-center justify-end gap-2.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowQuoteForm(false)}
+                        className="rounded-xl border border-ea-grey/30 px-4 py-2 text-xs font-semibold text-ea-grey hover:text-ea-white"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmittingQuote}
+                        className={cn(btn.primary, 'py-2 px-6 text-xs font-bold flex items-center gap-1.5 disabled:opacity-60')}
+                      >
+                        {isSubmittingQuote ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin text-ea-black" />
+                            <span>Sending Quote Request...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="h-3.5 w-3.5" /> Submit Quote Request
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
+
             {/* Direct Contact Actions */}
             <div className="pt-2 border-t border-ea-grey/15 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowQuoteForm(true);
+                  setQuoteRequested(false);
+                  setQuoteError('');
+                }}
+                className="flex-1 min-w-[150px] rounded-2xl bg-ea-green py-3 text-center text-xs font-bold text-ea-black hover:bg-ea-green/90 transition-colors flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(0,229,117,0.25)]"
+              >
+                <Send className="h-4 w-4" /> Request Free Quote
+              </button>
               <a
                 href={`tel:${profileModal.phone}`}
-                className="flex-1 min-w-[140px] rounded-2xl bg-ea-green py-3 text-center text-xs font-bold text-ea-black hover:bg-ea-green/90 transition-colors flex items-center justify-center gap-1.5"
+                className="rounded-2xl border border-ea-grey/30 bg-ea-black px-4 py-3 text-center text-xs font-bold text-ea-white hover:border-ea-green transition-colors flex items-center justify-center gap-1.5"
               >
-                <Phone className="h-4 w-4" /> Call {profileModal.phone}
+                <Phone className="h-4 w-4 text-ea-green" /> Call {profileModal.phone}
               </a>
               <a
                 href={`mailto:${profileModal.email}`}
-                className="flex-1 min-w-[140px] rounded-2xl border border-ea-grey/30 bg-ea-black py-3 text-center text-xs font-bold text-ea-white hover:border-ea-green transition-colors flex items-center justify-center gap-1.5"
+                className="rounded-2xl border border-ea-grey/30 bg-ea-black px-4 py-3 text-center text-xs font-bold text-ea-white hover:border-ea-green transition-colors flex items-center justify-center gap-1.5"
               >
-                <Mail className="h-4 w-4 text-ea-green" /> Send Email
+                <Mail className="h-4 w-4 text-ea-green" /> Email
               </a>
               <a
                 href={profileModal.website}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-2xl border border-ea-grey/30 bg-ea-black px-4 py-3 text-center text-xs font-bold text-ea-white hover:border-ea-green transition-colors flex items-center justify-center gap-1.5"
+                className="rounded-2xl border border-ea-grey/30 bg-ea-black px-3.5 py-3 text-center text-xs font-bold text-ea-white hover:border-ea-green transition-colors flex items-center justify-center gap-1.5"
               >
-                <Globe className="h-4 w-4 text-ea-green" /> Website <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+                <Globe className="h-4 w-4 text-ea-green" /> <ExternalLink className="h-3.5 w-3.5 opacity-60" />
               </a>
             </div>
           </div>

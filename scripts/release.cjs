@@ -27,7 +27,10 @@ async function main() {
 
   const isWindows = process.platform === 'win32';
   if (isWindows) {
-    execSync(`tar.exe -ac -f "${zipPath}" *`, { cwd: distDir, stdio: 'inherit' });
+    execSync(
+      `powershell -NoProfile -Command "tar.exe -a -c -f '${zipPath}' -C '${distDir}' *"`,
+      { stdio: 'inherit' }
+    );
   } else {
     execSync(`zip -r "${zipPath}" .`, { cwd: distDir, stdio: 'inherit' });
   }

@@ -23,9 +23,11 @@ import {
   DollarSign,
   Info,
   Check,
+  Loader2,
 } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { btn, Reveal, usePageMeta } from '../components/ui';
+import { submitInquiry } from '../wix/submissions';
 
 /* =========================================================================
    CONFIG & BENCHMARKS (from EAC UK Solar & Battery Model)
@@ -265,6 +267,8 @@ export default function Calculator() {
   );
   const [leadConsent, setLeadConsent] = useState<boolean>(true);
   const [leadSent, setLeadSent] = useState<boolean>(false);
+  const [isSubmittingLead, setIsSubmittingLead] = useState<boolean>(false);
+  const [leadError, setLeadError] = useState<string>('');
 
   /* =========================================================================
      COMPUTATIONS
@@ -2014,12 +2018,50 @@ export default function Calculator() {
                   </div>
                 ) : (
                   <form
-                    onSubmit={(e) => {
+                    onSubmit={async (e) => {
                       e.preventDefault();
-                      setLeadSent(true);
+                      setIsSubmittingLead(true);
+                      setLeadError('');
+                      try {
+                        const res = await submitInquiry({
+                          name: leadName,
+                          email: leadEmail,
+                          phone: leadPhone,
+                          type: 'Calculator',
+                          subject: `Solar Lead: ${leadWant} (${mode === 'quote' ? 'Quote Review' : 'System Sizing'})`,
+                          message: `Customer Inquiry: ${leadWant}\nMode: ${mode}\nSystem Sized: ${systemConfig.kWp} kW solar (${systemConfig.panels} panels)\nBattery: ${systemConfig.batt} kWh\nAnnual Yield: ${Math.round(calculation.gen)} kWh/yr\nAnnual Bill Savings: £${Math.round(calculation.totalAnnual)}\nEstimated Net Cost: £${Math.round(calculation.effectiveCost)}\nPayback: ~${isFinite(calculation.paybackYears) ? calculation.paybackYears.toFixed(1) : 'N/A'} years`,
+                          details: {
+                            mode,
+                            leadWant,
+                            systemKw: systemConfig.kWp,
+                            panels: systemConfig.panels,
+                            batteryKwh: systemConfig.batt,
+                            annualGenKwh: Math.round(calculation.gen),
+                            annualSavings: Math.round(calculation.totalAnnual),
+                            estimatedCost: Math.round(calculation.effectiveCost),
+                            paybackYears: isFinite(calculation.paybackYears) ? calculation.paybackYears.toFixed(1) : 'N/A',
+                            postcode,
+                          },
+                        });
+
+                        if (res.success) {
+                          setLeadSent(true);
+                        } else {
+                          setLeadError(res.error || 'Failed to submit your details. Please try again.');
+                        }
+                      } catch (err: any) {
+                        setLeadError(err?.message || 'A network error occurred. Please try again.');
+                      } finally {
+                        setIsSubmittingLead(false);
+                      }
                     }}
                     className="grid gap-4 sm:grid-cols-2"
                   >
+                    {leadError && (
+                      <div className="sm:col-span-2 rounded-xl border border-red-500/40 bg-red-500/10 p-3.5 text-xs text-red-200">
+                        {leadError}
+                      </div>
+                    )}
                     <div>
                       <label className="text-xs font-semibold text-ea-grey">Your Name</label>
                       <input
@@ -2081,8 +2123,21 @@ export default function Calculator() {
                     </div>
 
                     <div className="sm:col-span-2 pt-2">
-                      <button type="submit" className={cn(btn.primary, 'py-3 px-8 text-sm font-bold')}>
-                        Send My Details <ArrowRight className="h-4 w-4" />
+                      <button
+                        type="submit"
+                        disabled={isSubmittingLead}
+                        className={cn(btn.primary, 'py-3 px-8 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60')}
+                      >
+                        {isSubmittingLead ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin text-ea-black" />
+                            <span>Sending Details...</span>
+                          </>
+                        ) : (
+                          <>
+                            Send My Details <ArrowRight className="h-4 w-4" />
+                          </>
+                        )}
                       </button>
                     </div>
                   </form>
