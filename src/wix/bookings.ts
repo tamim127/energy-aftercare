@@ -231,15 +231,18 @@ export async function createAppointmentBooking(params: CreateBookingParams): Pro
           email: params.email.trim(),
           phone: normalizedPhone,
         },
+        additionalFields: params.notes?.trim()
+          ? [
+              {
+                id: '00000000-0000-0000-0000-000000000008',
+                value: params.notes.trim(),
+                label: 'Add your message',
+                valueType: 'SHORT_TEXT',
+              },
+            ]
+          : [],
         selectedPaymentOption: 'ONLINE',
         totalParticipants: 1,
-      },
-      formSubmission: {
-        first_name: firstName,
-        last_name: lastName,
-        email: params.email.trim(),
-        phone: normalizedPhone,
-        add_your_message: params.notes?.trim() || '',
       },
       participantNotification: { notifyParticipants: false },
     };
