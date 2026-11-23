@@ -6,6 +6,7 @@ const routes = [
   'services',
   'calculator',
   'book-online',
+  'login',
   'booking-calendar/platinum-support-plan',
   'booking-calendar/gold-support-plan',
   'booking-calendar/silver-support-plan',

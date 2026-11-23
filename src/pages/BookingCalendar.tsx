@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { format, isBefore, startOfToday, isWeekend } from 'date-fns';
 import {
@@ -8,25 +8,28 @@ import {
   CheckCircle2,
   Clock,
   ShieldCheck,
-  Info,
   Check,
   Loader2,
   AlertCircle,
-  HelpCircle,
   Lock,
+  UserCheck,
+  LogIn,
 } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { Calendar } from '@project/components/ui/calendar';
-import { plansLiveOrder, bookNowLabel } from '../content/plans';
+import { plansLiveOrder } from '../content/plans';
 import { useSupportPlans } from '../wix/cms';
 import { FormField, TextAreaField } from '../components/FormField';
 import { btn, usePageMeta } from '../components/ui';
-import { createAppointmentBooking, createBookingCheckout } from '../wix/bookings';
-import { getMemberState, subscribeMember } from '../wix/members/member-store';
+import {
+  createAppointmentBooking,
+  createBookingCheckout,
+  fetchAvailableTimeSlots,
+  DEFAULT_SLOTS,
+  type AvailableSlotInfo,
+} from '../wix/bookings';
+import { useMember } from '../hooks/useMember';
 import NotFound from './NotFound';
-
-// Front-end standard support hours (Monday–Friday, 10am–5pm UK).
-const SLOTS = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Name is required'),
@@ -44,12 +47,20 @@ const schema = z.object({
 
 export default function BookingCalendar() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const { data: plans = plansLiveOrder } = useSupportPlans();
   const plan = plans.find((p) => p.slug === slug);
   usePageMeta(`${plan?.name ?? 'Book Online'} | Energy Aftercare`);
 
+  const { loggedIn, member, loading: memberLoading } = useMember();
+
   const [date, setDate] = useState<Date>();
   const [slot, setSlot] = useState<string>();
+  const [availableSlots, setAvailableSlots] = useState<AvailableSlotInfo[]>(
+    DEFAULT_SLOTS.map((s) => ({ time: s, bookable: true }))
+  );
+  const [loadingSlots, setLoadingSlots] = useState(false);
+
   const [vals, setVals] = useState({ name: '', email: '', phone: '', notes: '' });
   const [errs, setErrs] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
@@ -57,35 +68,76 @@ export default function BookingCalendar() {
   const [isRedirectingToCheckout, setIsRedirectingToCheckout] = useState(false);
   const [submitError, setSubmitError] = useState<string>('');
 
+  // Sync logged in member data into form
   useEffect(() => {
-    const applyMember = () => {
-      const state = getMemberState();
-      if (state.loggedIn && state.member) {
-        setVals((prev) => ({
-          ...prev,
-          name:
-            prev.name ||
-            state.member?.displayName ||
-            `${state.member?.firstName || ''} ${state.member?.lastName || ''}`.trim(),
-          email: prev.email || state.member?.loginEmail || '',
-        }));
-      }
+    if (loggedIn && member) {
+      const fullName =
+        member.displayName ||
+        `${member.firstName || ''} ${member.lastName || ''}`.trim();
+      setVals((prev) => ({
+        ...prev,
+        name: prev.name || fullName,
+        email: prev.email || member.loginEmail || '',
+      }));
+    }
+  }, [loggedIn, member]);
+
+  // When date changes, query live available time slots from Wix Bookings API
+  useEffect(() => {
+    if (!date || !plan) return;
+
+    let cancelled = false;
+    setLoadingSlots(true);
+
+    fetchAvailableTimeSlots(plan.slug, date)
+      .then((slots) => {
+        if (!cancelled) {
+          setAvailableSlots(slots);
+          // If current selected slot is not bookable in newly fetched slots, reset it
+          if (slot) {
+            const found = slots.find((s) => s.time === slot);
+            if (!found || !found.bookable) {
+              setSlot(undefined);
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('Error fetching slots:', err);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoadingSlots(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
     };
-    applyMember();
-    return subscribeMember(applyMember);
-  }, []);
+  }, [date, plan]);
 
   if (!plan) return <NotFound />;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
+
+    // If user is not logged in, enforce login redirect
+    if (!loggedIn) {
+      navigate(`/login?redirect=/booking-calendar/${plan.slug}`);
+      return;
+    }
+
     const r = schema.safeParse(vals);
     const next: Record<string, string> = r.success
       ? {}
       : Object.fromEntries(r.error.issues.map((i) => [String(i.path[0]), i.message]));
-    if (!date || !slot) next.slot = 'Please select an available appointment date and time';
+
+    if (!date || !slot) {
+      next.slot = 'Please select an available appointment date and arrival time';
+    }
     setErrs(next);
+
     if (Object.keys(next).length > 0) {
       window.scrollTo({ top: 200, behavior: 'smooth' });
       return;
@@ -106,12 +158,13 @@ export default function BookingCalendar() {
       if (res.success && res.bookingId) {
         setIsRedirectingToCheckout(true);
         const checkoutRes = await createBookingCheckout(res.bookingId);
+
         if (checkoutRes.success && checkoutRes.checkoutUrl) {
           // Redirect to official Wix hosted checkout for online payment
           window.location.href = checkoutRes.checkoutUrl;
           return;
         } else {
-          // If Wix checkout is not configured yet or simulated, show success confirmation
+          // If checkout failed or simulated, show confirmation
           setIsRedirectingToCheckout(false);
           setDone(true);
         }
@@ -136,14 +189,14 @@ export default function BookingCalendar() {
             Connecting to Secure Wix Checkout...
           </h1>
           <p className="mt-3 text-sm text-ea-grey">
-            Please wait while we connect your {plan.name} appointment to the secure payment checkout.
+            Please wait while we transfer your {plan.name} appointment to the secure Wix Payment gateway.
           </p>
         </div>
       </section>
     );
   }
 
-  // Confirmation View (Keeping all service details visible)
+  // Confirmation View
   if (done) {
     return (
       <section className="bg-ea-black py-20 text-ea-white min-h-[80vh]">
@@ -157,7 +210,6 @@ export default function BookingCalendar() {
             <strong>{plan.name}</strong> appointment has been received.
           </p>
 
-          {/* Booking Summary Box */}
           <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-6 text-left space-y-4">
             <div className="flex justify-between items-baseline border-b border-ea-grey/15 pb-4">
               <div>
@@ -249,15 +301,82 @@ export default function BookingCalendar() {
           </div>
         </div>
 
+        {/* Member Authentication Status / Required Notice */}
+        {!memberLoading && (
+          <div>
+            {loggedIn ? (
+              <div className="rounded-2xl border border-ea-green/40 bg-ea-green/10 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <UserCheck className="h-5 w-5 text-ea-green shrink-0" />
+                  <div>
+                    <span className="font-bold text-ea-white">
+                      Verified Member Account:{' '}
+                      <strong className="text-ea-green">
+                        {member?.displayName || member?.loginEmail}
+                      </strong>
+                    </span>
+                    <p className="text-ea-grey text-[11px] mt-0.5">
+                      Your booking will be recorded under your customer profile and verified by Wix CRM.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-ea-green/20 border border-ea-green/40 px-2.5 py-1 text-[11px] font-bold text-ea-green">
+                    <Check className="h-3 w-3" /> Authenticated
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-3xl border border-amber-500/40 bg-amber-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-1">
+                    <Lock className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-ea-white flex items-center gap-2">
+                      <span>Member Sign-In Required for Engineer Bookings</span>
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-ea-white/80 max-w-xl leading-relaxed">
+                      To ensure verified dispatch of accredited UK engineers and protect system warranty records, please log in or create a customer account before confirming your appointment.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+                  <Link
+                    to={`/login?redirect=/booking-calendar/${plan.slug}`}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-ea-green px-6 py-3.5 text-xs font-bold text-ea-black hover:bg-ea-green/90 transition-all shadow-lg shadow-ea-green/20"
+                  >
+                    <LogIn className="h-4 w-4" /> Log In to Continue
+                  </Link>
+                  <Link
+                    to={`/login?mode=register&redirect=/booking-calendar/${plan.slug}`}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-ea-grey/40 bg-ea-black/50 px-6 py-3.5 text-xs font-bold text-ea-white hover:border-ea-green hover:text-ea-green transition-all"
+                  >
+                    <UserCheck className="h-4 w-4" /> Create Account
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Booking Form & Live Summary Layout (7 cols : 5 cols) */}
         <form onSubmit={submit} noValidate className="grid gap-8 lg:grid-cols-12 items-start">
           {/* Left Column: Date, Time & Contact Details (7 cols) */}
           <div className="space-y-6 lg:col-span-7">
             {/* Step 1: Appointment Date & Time */}
             <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-6 md:p-8 space-y-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-ea-green flex items-center gap-2">
-                <CalendarCheck className="h-4 w-4" /> 1. Select Date & Arrival Time
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-ea-green flex items-center gap-2">
+                  <CalendarCheck className="h-4 w-4" /> 1. Select Date &amp; Arrival Time
+                </h3>
+                {loadingSlots && (
+                  <span className="text-xs text-ea-grey flex items-center gap-1.5">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-ea-green" /> Checking live availability...
+                  </span>
+                )}
+              </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
                 {/* Calendar */}
@@ -280,35 +399,60 @@ export default function BookingCalendar() {
 
                 {/* Slots */}
                 <div className="rounded-2xl border border-ea-grey/20 bg-ea-black/50 p-4 flex flex-col">
-                  <p className="mb-2 text-xs font-bold text-ea-grey uppercase tracking-wider">
-                    {date ? format(date, 'EEEE d MMMM') : 'Select Date First'}
-                  </p>
-                  <div className="grid grid-cols-2 gap-2 flex-1 content-start mt-2" role="radiogroup" aria-label="Time">
-                    {SLOTS.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        role="radio"
-                        aria-checked={slot === s}
-                        disabled={!date || isSubmitting}
-                        onClick={() => {
-                          setSlot(s);
-                          setErrs((prev) => ({ ...prev, slot: '' }));
-                        }}
-                        className={cn(
-                          'py-3 rounded-xl border text-xs font-bold transition-all disabled:opacity-25',
-                          slot === s
-                            ? 'border-ea-green bg-ea-green text-ea-black shadow-[0_0_15px_rgba(0,229,117,0.3)]'
-                            : 'border-ea-grey/25 bg-ea-black text-ea-grey hover:border-ea-grey/60 hover:text-ea-white'
-                        )}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold text-ea-grey uppercase tracking-wider">
+                      {date ? format(date, 'EEEE d MMMM') : 'Select Date First'}
+                    </p>
+                    {date && (
+                      <span className="text-[10px] text-ea-green font-semibold">UK London Time</span>
+                    )}
+                  </div>
+
+                  <div
+                    className="grid grid-cols-2 gap-2 flex-1 content-start mt-2"
+                    role="radiogroup"
+                    aria-label="Time"
+                  >
+                    {availableSlots.map(({ time: s, bookable }) => {
+                      const isSelected = slot === s;
+                      return (
+                        <button
+                          key={s}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          disabled={!date || isSubmitting || !bookable}
+                          onClick={() => {
+                            if (bookable) {
+                              setSlot(s);
+                              setErrs((prev) => ({ ...prev, slot: '' }));
+                            }
+                          }}
+                          className={cn(
+                            'py-3 rounded-xl border text-xs font-bold transition-all relative',
+                            !bookable
+                              ? 'border-ea-grey/15 bg-ea-black/30 text-ea-grey/40 cursor-not-allowed line-through'
+                              : isSelected
+                              ? 'border-ea-green bg-ea-green text-ea-black shadow-[0_0_15px_rgba(0,229,117,0.3)]'
+                              : 'border-ea-grey/25 bg-ea-black text-ea-grey hover:border-ea-grey/60 hover:text-ea-white cursor-pointer'
+                          )}
+                        >
+                          <span>{s}</span>
+                          {!bookable && (
+                            <span className="block text-[9px] uppercase tracking-tighter text-red-400 font-semibold no-underline">
+                              Booked
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {errs.slot && (
-                    <p role="alert" className="mt-3 text-xs text-red-400 font-semibold flex items-center gap-1">
+                    <p
+                      role="alert"
+                      className="mt-3 text-xs text-red-400 font-semibold flex items-center gap-1"
+                    >
                       <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                       {errs.slot}
                     </p>
@@ -320,7 +464,7 @@ export default function BookingCalendar() {
             {/* Step 2: Contact Details */}
             <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-6 md:p-8 space-y-4">
               <h3 className="text-sm font-bold uppercase tracking-wider text-ea-green">
-                2. Contact & Installation Address
+                2. Contact &amp; Installation Address
               </h3>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -362,14 +506,17 @@ export default function BookingCalendar() {
               <TextAreaField
                 id="b-notes"
                 label="Property & System Information (optional)"
-                placeholder="e.g. 14 panels on slate roof, GivEnergy 9.5kWh battery in garage, experiencing warning light code F24..."
+                placeholder="e.g. 14 panels on slate roof, GivEnergy 9.5kWh battery in garage, inverter error code F24..."
                 value={vals.notes}
                 disabled={isSubmitting}
                 onChange={(e) => setVals({ ...vals, notes: e.target.value })}
               />
 
               {submitError && (
-                <div role="alert" className="rounded-xl border border-red-500/40 bg-red-950/30 p-4 text-xs font-semibold text-red-300 flex items-center gap-2">
+                <div
+                  role="alert"
+                  className="rounded-xl border border-red-500/40 bg-red-950/30 p-4 text-xs font-semibold text-red-300 flex items-center gap-2"
+                >
                   <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
                   <span>{submitError}</span>
                 </div>
@@ -377,7 +524,7 @@ export default function BookingCalendar() {
             </div>
           </div>
 
-          {/* Right Column: Sticky Summary & What is Included (5 cols) */}
+          {/* Right Column: Sticky Summary & Checkout (5 cols) */}
           <div className="space-y-6 lg:col-span-5 lg:sticky lg:top-24">
             <div className="rounded-3xl border border-ea-green/40 bg-ea-ink p-6 md:p-8 shadow-2xl space-y-6">
               {/* Header */}
@@ -391,7 +538,9 @@ export default function BookingCalendar() {
                 </div>
                 <div className="mt-2 flex items-center gap-2 text-xs text-ea-grey">
                   <Clock className="h-3.5 w-3.5 text-ea-green" />
-                  <span>Expected Duration: <strong>{plan.duration}</strong></span>
+                  <span>
+                    Expected Duration: <strong>{plan.duration}</strong>
+                  </span>
                 </div>
               </div>
 
@@ -427,7 +576,7 @@ export default function BookingCalendar() {
 
               {/* Conditions / Limits */}
               <div className="rounded-2xl border border-ea-grey/20 bg-ea-black/40 p-3.5 text-[11px] text-ea-grey space-y-1">
-                <span className="font-bold text-ea-white block">Service Limits & Conditions:</span>
+                <span className="font-bold text-ea-white block">Service Limits &amp; Conditions:</span>
                 <p className="leading-relaxed">{plan.conditions}</p>
               </div>
 
@@ -438,16 +587,20 @@ export default function BookingCalendar() {
                   disabled={isSubmitting}
                   className={cn(
                     btn.primary,
-                    'w-full py-4 text-sm font-bold flex items-center justify-center gap-2 shadow-xl'
+                    'w-full py-4 text-sm font-bold flex items-center justify-center gap-2 shadow-xl cursor-pointer'
                   )}
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Confirming Booking...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Verifying &amp; Initializing...
+                    </>
+                  ) : !loggedIn ? (
+                    <>
+                      <Lock className="h-4 w-4" /> Sign In &amp; Proceed to Checkout
                     </>
                   ) : (
                     <>
-                      <Lock className="h-4 w-4" /> Book & Proceed to Checkout
+                      <Lock className="h-4 w-4" /> Book &amp; Pay via Wix Checkout
                     </>
                   )}
                 </button>

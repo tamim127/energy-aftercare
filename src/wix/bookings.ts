@@ -34,6 +34,79 @@ export const WIX_BOOKING_SERVICES: Record<string, WixServiceInfo> = {
 
 export const STAFF_RESOURCE_ID = '43a93d1d-c32b-4a16-882e-71d9a6685f09';
 
+export interface AvailableSlotInfo {
+  time: string; // e.g. "10:00"
+  bookable: boolean;
+}
+
+export const DEFAULT_SLOTS = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
+/**
+ * Queries real-time available time slots from Wix Bookings for a given plan and date.
+ * Matches Europe/London timezone.
+ */
+export async function fetchAvailableTimeSlots(
+  slug: string,
+  date: Date
+): Promise<AvailableSlotInfo[]> {
+  const serviceInfo = WIX_BOOKING_SERVICES[slug];
+  if (!serviceInfo) {
+    return DEFAULT_SLOTS.map((s) => ({ time: s, bookable: true }));
+  }
+
+  try {
+    await ensureTokens();
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+
+    const res = await wixFetch('/_api/service-availability/v2/time-slots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        serviceId: serviceInfo.serviceId,
+        fromLocalDate: `${y}-${m}-${d}T00:00:00`,
+        toLocalDate: `${y}-${m}-${d}T23:59:59`,
+        timeZone: 'Europe/London',
+      }),
+    });
+
+    if (!res.ok) {
+      console.warn('Could not query time slots from Wix API, using fallback defaults.');
+      return DEFAULT_SLOTS.map((s) => ({ time: s, bookable: true }));
+    }
+
+    const data = await res.json();
+    const rawSlots: any[] = data?.timeSlots || [];
+
+    // Map each returned slot to HH:mm
+    const slotMap = new Map<string, boolean>();
+    for (const rs of rawSlots) {
+      if (rs.localStartDate) {
+        const timePart = rs.localStartDate.split('T')[1]?.slice(0, 5);
+        if (timePart) {
+          const isAvailable =
+            rs.bookable !== false &&
+            (rs.remainingCapacity === undefined || rs.remainingCapacity > 0);
+          slotMap.set(timePart, isAvailable);
+        }
+      }
+    }
+
+    return DEFAULT_SLOTS.map((slotTime) => {
+      const isBookable = slotMap.has(slotTime) ? slotMap.get(slotTime)! : true;
+      return {
+        time: slotTime,
+        bookable: isBookable,
+      };
+    });
+  } catch (err) {
+    console.warn('Failed to fetch available time slots:', err);
+    return DEFAULT_SLOTS.map((s) => ({ time: s, bookable: true }));
+  }
+}
+
 export interface CreateBookingParams {
   slug: string;
   date: Date;

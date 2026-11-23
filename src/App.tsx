@@ -10,6 +10,7 @@ import Services from './pages/Services';
 import Calculator from './pages/Calculator';
 import BookOnline from './pages/BookOnline';
 import BookingCalendar from './pages/BookingCalendar';
+import Login from './pages/Login';
 import InstallerSupport from './pages/InstallerSupport';
 import { ManufacturerSupport } from './pages/NewPages';
 import ApprovedInstallers from './pages/ApprovedInstallers';
@@ -64,6 +65,7 @@ export default function App() {
           <Route path="/calculator" element={<Calculator />} />
           <Route path="/book-online" element={<BookOnline />} />
           <Route path="/booking-calendar/:slug" element={<BookingCalendar />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/installer-support" element={<InstallerSupport />} />
           <Route path="/approved-installers" element={<ApprovedInstallers />} />
           <Route path="/manufacturer-support" element={<ManufacturerSupport />} />
