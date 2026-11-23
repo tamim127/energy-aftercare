@@ -16,7 +16,7 @@ export const nav: NavItem[] = [
     children: [
       { label: 'Services Overview', to: '/services' },
       { label: 'Book Online', to: '/book-online' },
-      { label: 'Savings Calculator', to: '/calculator' },
+      { label: 'Free Solar Quote Checker', to: '/calculator' },
     ],
   },
   {

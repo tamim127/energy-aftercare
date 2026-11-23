@@ -5,7 +5,6 @@ import { contact } from '../content/site';
 import { usePageContent, useServicesList, useSiteSettings } from '../wix/cms';
 import { Section, Reveal, Card, BtnLink, Eyebrow } from '../components/ui';
 import { usePageMeta } from '../components/ui';
-import SiteImage from '../components/SiteImage';
 import EnergyScroll from '../components/EnergyScroll';
 import { PlansGrid } from '../components/PlanCard';
 import ContactForm from '../components/ContactForm';
@@ -24,13 +23,13 @@ function Hero({ page }: { page: any }) {
   return (
     <section className="relative overflow-hidden bg-ea-black text-ea-white">
       <div className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-ea-green/10 blur-[120px]" />
-      <div className="ea-container relative grid items-center gap-8 py-12 sm:py-20 md:py-28 lg:grid-cols-[1.25fr_1fr]">
+      <div className="ea-container relative py-12 sm:py-16 md:py-24">
         <Reveal>
           <Eyebrow>{page.heroSubheading || c.hero.eyebrow}</Eyebrow>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold leading-[1.08] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold leading-[1.08] tracking-tight max-w-4xl">
             {page.heroHeading || c.hero.h1}
           </h1>
-          <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-ea-white/85 leading-relaxed">
+          <p className="mt-4 sm:mt-6 max-w-2xl text-base sm:text-lg text-ea-white/85 leading-relaxed">
             {page.heroBody || c.hero.body}
           </p>
           <ul className="mt-6 sm:mt-8 flex flex-wrap gap-2" aria-label="Trust badges">
@@ -49,9 +48,6 @@ function Hero({ page }: { page: any }) {
               {page.heroSecondaryCta || 'About Us'}
             </BtnLink>
           </div>
-        </Reveal>
-        <Reveal delay={0.15}>
-          <SiteImage slot="home-hero" ratio="landscape" className="w-full" src={page.heroImage} />
         </Reveal>
       </div>
     </section>

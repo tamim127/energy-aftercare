@@ -368,8 +368,8 @@ export default function Header() {
                           className="flex flex-col items-center justify-center p-3 rounded-2xl border border-ea-grey/25 bg-ea-ink text-center hover:border-ea-green/50 transition-all group"
                         >
                           <Calculator className="h-5 w-5 text-ea-green mb-1 group-hover:scale-110 transition-transform" />
-                          <span className="text-xs font-bold text-ea-white leading-tight">Calculator</span>
-                          <span className="text-[10px] text-ea-grey mt-0.5">Savings</span>
+                          <span className="text-xs font-bold text-ea-white leading-tight">Quote Checker</span>
+                          <span className="text-[10px] text-ea-grey mt-0.5">Free Tool</span>
                         </Link>
 
                         <Link

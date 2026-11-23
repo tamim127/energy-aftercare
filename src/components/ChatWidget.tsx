@@ -28,7 +28,7 @@ const INITIAL_MESSAGE: ChatMessage = {
 const SUGGESTED_QUESTIONS = [
   'What are your plan prices & inclusions?',
   'Find an approved installer near me',
-  'How does the savings calculator work?',
+  'How does the Free Solar Quote Checker work?',
   'Speak with our technical team',
 ];
 

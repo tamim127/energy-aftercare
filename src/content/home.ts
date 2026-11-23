@@ -8,8 +8,8 @@ export const homeContent = {
   hero: {
     eyebrow: 'Real Support. From Real People. In the UK.',
     h1: 'Independent Solar, Battery & EV Support Across the UK',
-    body: 'Independent technical support for solar PV, battery storage and EV charging systems. We support homeowners, businesses and installers across the UK, regardless of system brand.',
-    badges: ['UK-Based', 'Human', 'Independent', 'Manufacturer-Independent'],
+    body: 'Independent technical support for solar PV, battery storage and EV charging systems. We support homeowners, businesses, installers and equipment manufacturers across the UK, regardless of system brand.',
+    badges: ['UK-Based', 'Human', 'Independent'],
     primaryCta: 'Get Support',
     secondaryCta: 'Installer Support',
   },

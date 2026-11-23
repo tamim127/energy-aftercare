@@ -53,6 +53,7 @@ export default function BookingCalendar() {
   usePageMeta(`${plan?.name ?? 'Book Online'} | Energy Aftercare`);
 
   const { loggedIn, member, loading: memberLoading } = useMember();
+  const isVirtual = plan.tier === 'bronze' || plan.tier === 'silver' || plan.isVirtualOnly;
 
   const [date, setDate] = useState<Date>();
   const [slot, setSlot] = useState<string>();
@@ -134,7 +135,9 @@ export default function BookingCalendar() {
       : Object.fromEntries(r.error.issues.map((i) => [String(i.path[0]), i.message]));
 
     if (!date || !slot) {
-      next.slot = 'Please select an available appointment date and arrival time';
+      next.slot = isVirtual
+        ? 'Please select an available virtual appointment date and time'
+        : 'Please select an available appointment date and arrival time';
     }
     setErrs(next);
 
@@ -189,7 +192,9 @@ export default function BookingCalendar() {
             Connecting to Secure Wix Checkout...
           </h1>
           <p className="mt-3 text-sm text-ea-grey">
-            Please wait while we transfer your {plan.name} appointment to the secure Wix Payment gateway.
+            {isVirtual
+              ? `Please wait while we transfer your ${plan.name} virtual consultation to the secure Wix Payment gateway.`
+              : `Please wait while we transfer your ${plan.name} appointment to the secure Wix Payment gateway.`}
           </p>
         </div>
       </section>
@@ -204,17 +209,19 @@ export default function BookingCalendar() {
           <div className="h-16 w-16 rounded-full bg-ea-green/10 border border-ea-green/40 flex items-center justify-center text-ea-green mx-auto">
             <CheckCircle2 className="h-10 w-10" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold">Booking Confirmed!</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold">
+            {isVirtual ? 'Virtual Consultation Confirmed!' : 'Booking Confirmed!'}
+          </h1>
           <p className="text-base text-ea-white/80">
             Thank you, <strong className="text-ea-green">{vals.name}</strong>. Your{' '}
-            <strong>{plan.name}</strong> appointment has been received.
+            <strong>{plan.name}</strong> {isVirtual ? 'virtual consultation has been scheduled. Video joining link and appointment details have been sent to your email.' : 'appointment has been received.'}
           </p>
 
           <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-6 text-left space-y-4">
             <div className="flex justify-between items-baseline border-b border-ea-grey/15 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-ea-green">
-                  Booked Service
+                  {isVirtual ? 'Virtual Support Service' : 'Booked Service'}
                 </span>
                 <h3 className="text-xl font-bold text-ea-white mt-1">{plan.name}</h3>
               </div>
@@ -223,7 +230,9 @@ export default function BookingCalendar() {
 
             <div className="grid gap-3 sm:grid-cols-2 text-xs">
               <div>
-                <span className="text-ea-grey block">Date & Time</span>
+                <span className="text-ea-grey block">
+                  {isVirtual ? 'Virtual Appointment Time' : 'Date & Arrival Time'}
+                </span>
                 <strong className="text-ea-white">
                   {format(date!, 'EEEE d MMMM yyyy')} at {slot}
                 </strong>
@@ -244,7 +253,7 @@ export default function BookingCalendar() {
 
             <div className="border-t border-ea-grey/15 pt-4">
               <span className="text-xs font-bold uppercase tracking-wider text-ea-grey block mb-2">
-                What to expect on the day:
+                {isVirtual ? 'What to expect in your virtual session:' : 'What to expect on the day:'}
               </span>
               <ul className="space-y-1.5 text-xs text-ea-white/80">
                 {plan.inclusions.map((inc, i) => (
@@ -285,7 +294,8 @@ export default function BookingCalendar() {
           <div className="mt-4 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-ea-grey/15 pb-6">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-ea-green flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4" /> Direct Engineer Booking
+                <ShieldCheck className="h-4 w-4" />{' '}
+                {isVirtual ? 'Virtual Consultation Booking' : 'Direct Engineer Booking'}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mt-1 text-ea-white">
                 Book {plan.name}
@@ -296,7 +306,9 @@ export default function BookingCalendar() {
             </div>
             <div className="text-left md:text-right">
               <span className="text-3xl sm:text-4xl font-black text-ea-green">{plan.price}</span>
-              <p className="text-xs text-ea-grey mt-0.5">Fixed Price • 0% VAT Included</p>
+              <p className="text-xs text-ea-grey mt-0.5">
+                Fixed Price • 0% VAT Included ({isVirtual ? 'Virtual Support' : 'In-Person Support'})
+              </p>
             </div>
           </div>
         </div>
@@ -334,10 +346,16 @@ export default function BookingCalendar() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-ea-white flex items-center gap-2">
-                      <span>Member Sign-In Required for Engineer Bookings</span>
+                      <span>
+                        {isVirtual
+                          ? 'Member Sign-In Required for Virtual Consultations'
+                          : 'Member Sign-In Required for Engineer Bookings'}
+                      </span>
                     </h3>
                     <p className="mt-1 text-xs sm:text-sm text-ea-white/80 max-w-xl leading-relaxed">
-                      To ensure verified dispatch of accredited UK engineers and protect system warranty records, please log in or create a customer account before confirming your appointment.
+                      {isVirtual
+                        ? 'To verify your account and send direct virtual consultation joining links and system records, please log in or create a customer account before confirming your appointment.'
+                        : 'To ensure verified dispatch of accredited UK engineers and protect system warranty records, please log in or create a customer account before confirming your appointment.'}
                     </p>
                   </div>
                 </div>
@@ -369,7 +387,8 @@ export default function BookingCalendar() {
             <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-6 md:p-8 space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-ea-green flex items-center gap-2">
-                  <CalendarCheck className="h-4 w-4" /> 1. Select Date &amp; Arrival Time
+                  <CalendarCheck className="h-4 w-4" />{' '}
+                  {isVirtual ? '1. Select Date & Virtual Appointment Time' : '1. Select Date & Arrival Time'}
                 </h3>
                 {loadingSlots && (
                   <span className="text-xs text-ea-grey flex items-center gap-1.5">
@@ -464,7 +483,7 @@ export default function BookingCalendar() {
             {/* Step 2: Contact Details */}
             <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-6 md:p-8 space-y-4">
               <h3 className="text-sm font-bold uppercase tracking-wider text-ea-green">
-                2. Contact &amp; Installation Address
+                {isVirtual ? '2. Contact & Customer Details' : '2. Contact & Installation Address'}
               </h3>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -505,8 +524,8 @@ export default function BookingCalendar() {
 
               <TextAreaField
                 id="b-notes"
-                label="Property & System Information (optional)"
-                placeholder="e.g. 14 panels on slate roof, GivEnergy 9.5kWh battery in garage, inverter error code F24..."
+                label={isVirtual ? 'System Information & Consultation Topics (optional)' : 'Property & System Information (optional)'}
+                placeholder={isVirtual ? 'e.g. Inverter app offline, battery setup questions, EV charging scheduling, monitoring portal configuration...' : 'e.g. 14 panels on slate roof, GivEnergy 9.5kWh battery in garage, inverter error code F24...'}
                 value={vals.notes}
                 disabled={isSubmitting}
                 onChange={(e) => setVals({ ...vals, notes: e.target.value })}
@@ -530,7 +549,7 @@ export default function BookingCalendar() {
               {/* Header */}
               <div className="border-b border-ea-grey/15 pb-4">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-ea-green">
-                  Booking Summary
+                  {isVirtual ? 'Virtual Consultation Summary' : 'Booking Summary'}
                 </span>
                 <div className="mt-1 flex items-baseline justify-between">
                   <h3 className="text-xl font-extrabold text-ea-white">{plan.name}</h3>
@@ -546,7 +565,9 @@ export default function BookingCalendar() {
 
               {/* Selected Slot Callout */}
               <div className="rounded-2xl border border-ea-grey/20 bg-ea-black/60 p-4 text-xs">
-                <span className="text-ea-grey block font-semibold mb-1">Appointment Time:</span>
+                <span className="text-ea-grey block font-semibold mb-1">
+                  {isVirtual ? 'Virtual Appointment Time:' : 'Appointment Time:'}
+                </span>
                 {date && slot ? (
                   <p className="text-sm font-bold text-ea-white flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-ea-green" />
@@ -554,7 +575,8 @@ export default function BookingCalendar() {
                   </p>
                 ) : (
                   <p className="text-amber-300 italic flex items-center gap-1.5">
-                    <AlertCircle className="h-3.5 w-3.5" /> Please pick a date and arrival time
+                    <AlertCircle className="h-3.5 w-3.5" />{' '}
+                    {isVirtual ? 'Please pick a date and virtual session time' : 'Please pick a date and arrival time'}
                   </p>
                 )}
               </div>
@@ -562,7 +584,7 @@ export default function BookingCalendar() {
               {/* Inclusions List */}
               <div className="space-y-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-ea-white block">
-                  What is included in this visit:
+                  {isVirtual ? 'What is included in this virtual session:' : 'What is included in this visit:'}
                 </span>
                 <ul className="space-y-2 text-xs text-ea-white/85">
                   {plan.inclusions.map((item, i) => (
@@ -605,7 +627,9 @@ export default function BookingCalendar() {
                   )}
                 </button>
                 <p className="mt-2.5 text-center text-[10px] text-ea-grey">
-                  Direct appointment dispatch by certified renewable engineers across the UK.
+                  {isVirtual
+                    ? 'Virtual session video link and joining details will be sent directly to your email upon confirmation.'
+                    : 'Direct appointment dispatch by certified renewable engineers across the UK.'}
                 </p>
               </div>
             </div>

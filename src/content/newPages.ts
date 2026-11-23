@@ -1,14 +1,19 @@
-// New pages agreed with the client. Every sentence below is reused verbatim from the live FAQ page.
+// New pages agreed with the client verbatim from pre-launch instructions.
 export const manufacturerContent = {
-  meta: { title: 'Manufacturer Support | Energy Aftercare', description: '' },
-  heading: 'Manufacturer Support',
-  intro: 'Energy Aftercare is manufacturer-independent and hardware-agnostic.',
+  meta: {
+    title: 'UK Technical and After-Sales Support for Manufacturers | Energy Aftercare',
+    description:
+      'We provide a UK support team for solar, inverter, battery and EV charger manufacturers, helping their installers and customers with pre-launch setup, diagnostics and warranty coordination.',
+  },
+  heading: 'UK technical and after-sales support for manufacturers',
+  intro:
+    'We provide a UK support team for solar, inverter, battery and EV charger manufacturers, helping their installers and customers. We offer short-term cover (launches, busy periods, backlogs) or long-term UK after-sales support, either alongside your team or under your brand.',
   blocks: [
-    'We support systems across different manufacturers and technologies rather than being tied to one particular product or brand.',
-    'Where an issue requires manufacturer involvement, we can help diagnose the problem, gather the relevant information and support the escalation process.',
+    'Our services include pre-launch support setup, troubleshooting guides, installer training, commissioning help, monitoring, remote fault diagnosis, and escalation with fault logs.',
+    'We also collect warranty evidence, coordinate approved returns/replacements, update customers/installers, and report on recurring faults, resolutions and training needs.',
   ],
-  ctaText: "Speak to a real person at Energy Aftercare and we'll help you work out the next step.",
-  ctaButton: 'Get Support',
+  ctaText: 'Partner with our UK-based technical engineering team to elevate your hardware support.',
+  ctaButton: 'Discuss UK manufacturer support',
 };
 
 export const approvedInstallersContent = {

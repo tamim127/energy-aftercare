@@ -1,8 +1,6 @@
 import { Sun, Cpu, BatteryCharging, PlugZap } from 'lucide-react';
 import { homeContent } from '../content/home';
-import SiteImage from './SiteImage';
 
-// Simple two-column section (image + list) — easy to rebuild in Wix.
 const byTitle = (t: string) => homeContent.services.items.find((i) => i.title === t)!;
 const ITEMS = [
   { ...byTitle('Solar Optimisation'), Icon: Sun },
@@ -11,20 +9,22 @@ const ITEMS = [
   { ...byTitle('EV Integration'), Icon: PlugZap },
 ];
 
-export default function EnergyScroll({ secondaryImage }: { secondaryImage?: string }) {
+export default function EnergyScroll({ secondaryImage: _secondaryImage }: { secondaryImage?: string }) {
   return (
-    <section className="bg-ea-black text-ea-white">
-      <div className="ea-container grid items-center gap-12 py-20 lg:grid-cols-2">
-        <SiteImage slot="home-section2" ratio="square" alt="Home energy system" src={secondaryImage} />
-        <div className="space-y-6">
+    <section className="bg-ea-black text-ea-white pt-2 pb-12 sm:pb-16 border-t border-ea-grey/15">
+      <div className="ea-container">
+        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {ITEMS.map(({ title, body, Icon }) => (
-            <div key={title} className="flex gap-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ea-green text-ea-black">
-                <Icon className="h-5 w-5" />
-              </span>
+            <div
+              key={title}
+              className="rounded-2xl border border-ea-grey/20 bg-ea-ink/70 p-6 flex flex-col justify-between hover:border-ea-green/50 transition-all group"
+            >
               <div>
-                <h3 className="text-lg font-bold">{title}</h3>
-                <p className="mt-1 text-ea-grey">{body}</p>
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ea-green/10 border border-ea-green/30 text-ea-green mb-4 group-hover:bg-ea-green group-hover:text-ea-black transition-colors">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="text-base sm:text-lg font-bold text-ea-white">{title}</h3>
+                <p className="mt-2 text-xs sm:text-sm text-ea-white/70 leading-relaxed">{body}</p>
               </div>
             </div>
           ))}

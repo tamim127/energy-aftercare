@@ -105,14 +105,14 @@ export default function Services() {
       <section className="border-t border-ea-grey/15 bg-ea-ink py-20 text-center">
         <div className="ea-container max-w-3xl">
           <h3 className="text-3xl font-extrabold text-ea-white">
-            Want to calculate your exact savings & efficiency?
+            Want to verify your solar quote or estimate system yield?
           </h3>
           <p className="mt-4 text-base text-ea-white/70">
-            Use our interactive Solar PV & Battery Storage Calculator to estimate your system's annual yield, assess unserviced efficiency risks, and find your optimal support plan.
+            Use our independent Free Solar Quote Checker to evaluate equipment quality, pricing, and warranties with zero sales pressure.
           </p>
           <div className="mt-8 flex justify-center">
             <Link to="/calculator" className="inline-flex items-center gap-2 rounded-full bg-ea-green px-8 py-4 text-base font-bold text-ea-black transition-all hover:bg-white">
-              Launch Savings Calculator <ArrowRight className="h-5 w-5" />
+              Launch Free Solar Quote Checker <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
         </div>

@@ -110,6 +110,11 @@ export default function ApprovedInstallers() {
     const outcodePrefix = outcodeMatch ? outcodeMatch[1] : '';
 
     return installers.filter((inst) => {
+      // 0. Only published/approved installer profiles
+      if (inst.status !== 'active') {
+        return false;
+      }
+
       // 1. Service filter
       if (selectedService !== 'All' && !inst.services.includes(selectedService)) {
         return false;

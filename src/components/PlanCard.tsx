@@ -28,8 +28,23 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
       <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', s.bar)} />
       <div className="flex items-center justify-between">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-ea-grey">{plan.tier}</p>
-        <span className="flex items-center gap-1 rounded-full bg-ea-black border border-ea-grey/20 px-2.5 py-0.5 text-[11px] font-semibold text-ea-white/70">
-          <Clock className="h-3 w-3 text-ea-green" /> {plan.duration.split(' ')[0]} {plan.duration.split(' ')[1]}
+        <span
+          className={cn(
+            'flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+            plan.tier === 'gold' || plan.tier === 'platinum'
+              ? 'border-ea-green/30 bg-ea-green/10 text-ea-green'
+              : 'border-ea-grey/30 bg-ea-black text-ea-white/80'
+          )}
+        >
+          {plan.tier === 'gold' || plan.tier === 'platinum' ? (
+            <>
+              <Shield className="h-3 w-3 text-ea-green" /> In-Person Available
+            </>
+          ) : (
+            <>
+              <Clock className="h-3 w-3 text-ea-green" /> Virtual Visit
+            </>
+          )}
         </span>
       </div>
 
@@ -44,7 +59,11 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
         <span className={cn('font-black tracking-tight text-ea-green', large ? 'text-5xl' : 'text-4xl')}>
           {plan.price}
         </span>
-        <span className="text-xs text-ea-grey">/ on-site visit (inc. VAT)</span>
+        <span className="text-xs text-ea-grey">
+          {plan.tier === 'gold' || plan.tier === 'platinum'
+            ? '/ in-person support (0% VAT)'
+            : '/ virtual support (0% VAT)'}
+        </span>
       </div>
 
       {/* Key Inclusions */}

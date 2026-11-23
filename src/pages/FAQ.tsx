@@ -196,7 +196,7 @@ export default function FAQ() {
                 Clear Search & View All FAQs
               </button>
               <a
-                href="#/contact"
+                href="/#contact"
                 className="rounded-full border border-ea-grey/30 bg-ea-black text-ea-white font-bold px-6 py-2.5 text-xs transition-colors hover:border-ea-green hover:text-ea-green"
               >
                 Speak to Our Team

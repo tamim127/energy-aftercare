@@ -174,8 +174,8 @@ const STD_INV = [3, 3.6, 4.6, 5, 6, 8, 10, 12, 15, 20];
 
 export default function Calculator() {
   usePageMeta(
-    'Solar & Battery Calculator & Quote Checker | Energy Aftercare',
-    'Check if your solar quote is fair or estimate annual savings, payback, and lifetime return with our independent UK solar and battery calculator.'
+    'Free Solar Quote Checker | Energy Aftercare',
+    'Check if your solar quote is fair or estimate annual savings, payback, and lifetime return with our free independent UK solar quote checker.'
   );
 
   // STEP: 1 = choose path, 2 = system/quote, 3 = home/energy, 4 = results
@@ -194,7 +194,7 @@ export default function Calculator() {
   const [qInvKw, setQInvKw] = useState<number>(5);
   const [qPhase, setQPhase] = useState<'1' | '3' | ''>('1');
   const [qInvBrand, setQInvBrand] = useState<string>('');
-  const [qPrice, setQPrice] = useState<number>(11500);
+  const [qPrice, setQPrice] = useState<number | ''>('');
   const [qInstaller, setQInstaller] = useState<string>('');
 
   // BOS & installation items
@@ -212,13 +212,13 @@ export default function Calculator() {
   const [xBackup, setXBackup] = useState<boolean>(false);
   const [xOpt, setXOpt] = useState<boolean>(false);
 
-  // Warranties
-  const [wPanel, setWPanel] = useState<number | ''>(25);
-  const [wPerf, setWPerf] = useState<number | ''>(30);
-  const [wInv, setWInv] = useState<number | ''>(10);
-  const [wBatt, setWBatt] = useState<number | ''>(10);
-  const [wWork, setWWork] = useState<number | ''>(2);
-  const [wIns, setWIns] = useState<'yes' | 'no' | ''>('yes');
+  // Warranties (Remain blank / "Not stated" until confirmed)
+  const [wPanel, setWPanel] = useState<number | ''>('');
+  const [wPerf, setWPerf] = useState<number | ''>('');
+  const [wInv, setWInv] = useState<number | ''>('');
+  const [wBatt, setWBatt] = useState<number | ''>('');
+  const [wWork, setWWork] = useState<number | ''>('');
+  const [wIns, setWIns] = useState<'yes' | 'no' | ''>('');
 
   /* ---------- New System Mode State ---------- */
   const [sysType, setSysType] = useState<'hybrid' | 'ongrid' | 'offgrid'>('hybrid');
@@ -463,18 +463,18 @@ export default function Calculator() {
     let planName = 'Gold Support Plan';
     let planPrice = '£299';
     let planReason =
-      'Comprehensive annual electrical inspection & proactive battery diagnostics.';
+      '4 cases, priority support, performance and battery optimisation reviews; in-person support available.';
     if (s.offgrid || s.kWp >= 8 || s.batt >= 15) {
       planSlug = 'platinum-support-plan';
       planName = 'Platinum Support Plan';
       planPrice = '£449';
       planReason =
-        'Priority engineer support, remote firmware telemetry, and multi-string balancing.';
+        '6 cases, priority support, annual system review, and discounted site visits.';
     } else if (s.batt === 0 && s.kWp <= 3.6) {
       planSlug = 'silver-support-plan';
       planName = 'Silver Support Plan';
       planPrice = '£149';
-      planReason = 'Ideal for standard solar string systems requiring periodic certification.';
+      planReason = '2 cases, 2 virtual visits, including remote system health check.';
     }
 
     return {
@@ -675,11 +675,10 @@ export default function Calculator() {
               <Sparkles className="h-4 w-4" /> Independent UK Solar & Battery Analysis
             </div>
             <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-ea-white">
-              Solar & Battery <span className="text-ea-green">Calculator</span>
+              Free Solar <span className="text-ea-green">Quote Checker</span>
             </h1>
             <p className="mt-3 max-w-2xl text-base sm:text-lg text-ea-white/75">
-              Check whether an installer quote is genuinely fair, or size a bespoke setup for your home
-              with real UK regional yields, daytime habits, and lifetime savings.
+              Check whether an installer quote is genuinely fair, or review system sizing, missing BOS items, warranties, and lifetime savings with our independent UK checker.
             </p>
 
             {/* Stepper Navigation */}
@@ -1194,8 +1193,9 @@ export default function Calculator() {
                         <input
                           type="number"
                           step="100"
+                          placeholder="Not stated"
                           value={qPrice}
-                          onChange={(e) => setQPrice(parseInt(e.target.value) || 0)}
+                          onChange={(e) => setQPrice(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                           className="mt-1.5 w-full rounded-2xl border border-ea-green/50 bg-ea-black px-4 py-3 text-2xl font-black text-ea-green focus:border-ea-green focus:outline-none"
                         />
                         <p className="mt-1 text-xs text-ea-grey">
