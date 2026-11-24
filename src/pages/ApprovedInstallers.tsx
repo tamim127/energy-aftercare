@@ -427,26 +427,31 @@ export default function ApprovedInstallers() {
               )}
             >
               {filteredInstallers.length === 0 ? (
-                <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-8 text-center space-y-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ea-black text-ea-green mx-auto border border-ea-grey/20">
-                    <MapPin className="h-6 w-6" />
+                <div className="rounded-3xl border border-ea-grey/25 bg-ea-ink p-8 text-center space-y-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ea-green/10 text-ea-green mx-auto border border-ea-green/30">
+                    <ShieldCheck className="h-7 w-7" />
                   </div>
-                  <h3 className="text-lg font-bold text-ea-white">No direct match for this search</h3>
-                  <p className="text-xs text-ea-grey max-w-sm mx-auto leading-relaxed">
-                    We keep our network strictly limited to maintain quality. If there is no listing for
-                    your exact postcode yet, contact us and we will recommend a vetted partner serving your
-                    county.
+                  <h3 className="text-xl font-bold text-ea-white">Approved Installer Network</h3>
+                  <p className="text-xs text-ea-white/80 max-w-sm mx-auto leading-relaxed">
+                    Our selective network of MCS-certified solar and battery installers is currently being finalized to ensure strict quality and compliance standards.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedService('All');
-                    }}
-                    className={cn(btn.outlineDark, 'py-2 px-4 text-xs font-bold mt-2')}
-                  >
-                    View All Approved Installers
-                  </button>
+                  <p className="text-xs text-ea-grey max-w-sm mx-auto">
+                    If you are a homeowner seeking a vetted installer recommendation, or an accredited installer applying to join, please reach out to our team below.
+                  </p>
+                  <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+                    <Link
+                      to="/#contact"
+                      className={cn(btn.primary, 'py-2.5 px-5 text-xs font-bold text-center justify-center')}
+                    >
+                      Request a Recommendation <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                    <Link
+                      to="/installer-support"
+                      className={cn(btn.outlineDark, 'py-2.5 px-5 text-xs font-bold text-center justify-center')}
+                    >
+                      Installer Partnerships
+                    </Link>
+                  </div>
                 </div>
               ) : (
                 /* Ultra-smooth scrolling with zero ugly scrollbars */

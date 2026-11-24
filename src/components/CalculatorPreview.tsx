@@ -56,28 +56,40 @@ export default function CalculatorPreview({ page }: { page?: any }) {
                   </div>
 
                   <div className="mt-4 space-y-2.5 text-xs sm:text-sm">
-                    <div className="flex items-start gap-2.5 rounded-xl bg-ea-ink p-3 border border-ea-grey/15">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ea-green/20 text-[11px] font-bold text-ea-green">
+                    <Link
+                      to="/calculator?mode=quote"
+                      className="group flex items-start gap-2.5 rounded-xl bg-ea-ink p-3 border border-ea-grey/15 hover:border-ea-green/50 hover:bg-ea-ink/80 transition-all cursor-pointer"
+                    >
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ea-green/20 text-[11px] font-bold text-ea-green group-hover:bg-ea-green group-hover:text-ea-black transition-colors">
                         1
                       </span>
-                      <div>
-                        <p className="font-semibold text-ea-white">Check an Installer&apos;s Quote</p>
+                      <div className="flex-1">
+                        <p className="font-semibold text-ea-white flex items-center justify-between">
+                          Check an Installer&apos;s Quote
+                          <ArrowRight className="h-3.5 w-3.5 text-ea-green opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                        </p>
                         <p className="text-[12px] text-ea-white/65 mt-0.5">
                           Validate fair price, warranties &amp; hidden extras
                         </p>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-2.5 rounded-xl bg-ea-ink p-3 border border-ea-grey/15">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ea-green/20 text-[11px] font-bold text-ea-green">
+                    </Link>
+                    <Link
+                      to="/calculator?mode=new"
+                      className="group flex items-start gap-2.5 rounded-xl bg-ea-ink p-3 border border-ea-grey/15 hover:border-ea-green/50 hover:bg-ea-ink/80 transition-all cursor-pointer"
+                    >
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ea-green/20 text-[11px] font-bold text-ea-green group-hover:bg-ea-green group-hover:text-ea-black transition-colors">
                         2
                       </span>
-                      <div>
-                        <p className="font-semibold text-ea-white">Model System from Scratch</p>
+                      <div className="flex-1">
+                        <p className="font-semibold text-ea-white flex items-center justify-between">
+                          Model System from Scratch
+                          <ArrowRight className="h-3.5 w-3.5 text-ea-green opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                        </p>
                         <p className="text-[12px] text-ea-white/65 mt-0.5">
                           Solar &amp; battery sizing, generation &amp; payback
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   </div>
 
                   <div className="mt-5">

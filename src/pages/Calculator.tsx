@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sun,
@@ -178,9 +178,30 @@ export default function Calculator() {
     'Check if your solar quote is fair or estimate annual savings, payback, and lifetime return with our free independent UK solar quote checker.'
   );
 
+  const [searchParams] = useSearchParams();
+
   // STEP: 1 = choose path, 2 = system/quote, 3 = home/energy, 4 = results
-  const [step, setStep] = useState<number>(1);
-  const [mode, setMode] = useState<'quote' | 'new'>('new');
+  const [step, setStep] = useState<number>(() => {
+    const s = searchParams.get('step');
+    if (s && !isNaN(parseInt(s))) return parseInt(s);
+    if (searchParams.get('mode')) return 2;
+    return 1;
+  });
+  const [mode, setMode] = useState<'quote' | 'new'>(() => {
+    return searchParams.get('mode') === 'quote' ? 'quote' : 'new';
+  });
+
+  useEffect(() => {
+    const m = searchParams.get('mode');
+    if (m === 'quote' || m === 'new') {
+      setMode(m);
+      setStep(2);
+    }
+    const s = searchParams.get('step');
+    if (s && !isNaN(parseInt(s))) {
+      setStep(parseInt(s));
+    }
+  }, [searchParams]);
 
   /* ---------- Quote Mode State ---------- */
   const [qPanels, setQPanels] = useState<number>(8);
@@ -194,7 +215,7 @@ export default function Calculator() {
   const [qInvKw, setQInvKw] = useState<number>(5);
   const [qPhase, setQPhase] = useState<'1' | '3' | ''>('1');
   const [qInvBrand, setQInvBrand] = useState<string>('');
-  const [qPrice, setQPrice] = useState<number | ''>('');
+  const [qPrice, setQPrice] = useState<number | ''>(9800);
   const [qInstaller, setQInstaller] = useState<string>('');
 
   // BOS & installation items
@@ -448,8 +469,9 @@ export default function Calculator() {
     const totalAnnual = billSave + exportInc + shiftSave + standing;
     const selfShare = cons > 0 ? (direct + fromBatt + shift) / cons : 0;
 
-    const effectiveCost = mode === 'quote' ? s.price : fairRange[1];
-    const paybackYears = totalAnnual > 0 ? effectiveCost / totalAnnual : Infinity;
+    const effectiveCost =
+      mode === 'quote' && s.price && s.price > 0 ? s.price : fairRange[1] || 9500;
+    const paybackYears = totalAnnual > 0 && effectiveCost > 0 ? effectiveCost / totalAnnual : Infinity;
 
     // 25-year lifetime return with 0.5% yearly degradation & £1000 inverter replacement
     let lifetimeTotal = 0;
@@ -644,25 +666,18 @@ export default function Calculator() {
         setErrorMessage('Please specify either the number of solar panels or battery size.');
         return;
       }
-      if (!qPrice || qPrice <= 0) {
-        setErrorMessage('Please enter the total quoted price from your installer.');
-        return;
-      }
     }
     setStep(3);
-    window.scrollTo({ top: 150, behavior: 'smooth' });
+    window.scrollTo({ top: 120, behavior: 'smooth' });
   };
 
   const handleCalculate = () => {
     setErrorMessage('');
-    if (totalConsumption < 300) {
-      setErrorMessage(
-        'Please enter your electricity consumption or pick an estimate from the household size options.'
-      );
-      return;
+    if (!usage || usage < 100) {
+      setUsage(2700);
     }
     setStep(4);
-    window.scrollTo({ top: 150, behavior: 'smooth' });
+    window.scrollTo({ top: 120, behavior: 'smooth' });
   };
 
   return (
@@ -692,14 +707,17 @@ export default function Calculator() {
                 <button
                   key={s.n}
                   type="button"
-                  onClick={() => s.n < step && setStep(s.n)}
+                  onClick={() => {
+                    setStep(s.n);
+                    window.scrollTo({ top: 120, behavior: 'smooth' });
+                  }}
                   className={cn(
-                    'rounded-full px-4 py-2 font-bold transition-all border flex items-center gap-1.5',
+                    'rounded-full px-4 py-2 font-bold transition-all border flex items-center gap-1.5 cursor-pointer',
                     step === s.n
                       ? 'border-ea-green bg-ea-green text-ea-black shadow-[0_0_20px_rgba(0,229,117,0.3)]'
                       : s.n < step
-                      ? 'border-ea-green/40 bg-ea-green/10 text-ea-green hover:bg-ea-green/20 cursor-pointer'
-                      : 'border-ea-grey/25 bg-ea-ink text-ea-grey/60 cursor-default'
+                      ? 'border-ea-green/40 bg-ea-green/10 text-ea-green hover:bg-ea-green/20'
+                      : 'border-ea-grey/25 bg-ea-ink text-ea-white/80 hover:border-ea-grey/50 hover:text-ea-white'
                   )}
                 >
                   {s.n < step && <Check className="h-3.5 w-3.5 stroke-[3]" />}
@@ -739,6 +757,7 @@ export default function Calculator() {
                   onClick={() => {
                     setMode('quote');
                     setStep(2);
+                    window.scrollTo({ top: 120, behavior: 'smooth' });
                   }}
                   className={cn(
                     'group text-left rounded-3xl border p-8 transition-all duration-300 relative overflow-hidden',
@@ -778,6 +797,7 @@ export default function Calculator() {
                   onClick={() => {
                     setMode('new');
                     setStep(2);
+                    window.scrollTo({ top: 120, behavior: 'smooth' });
                   }}
                   className={cn(
                     'group text-left rounded-3xl border p-8 transition-all duration-300 relative overflow-hidden',
@@ -823,6 +843,46 @@ export default function Calculator() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-8"
             >
+              {/* Mode Switcher Banner */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-2.5 rounded-2xl bg-ea-ink border border-ea-grey/25">
+                <div className="flex items-center gap-2 pl-2">
+                  <span className="h-2 w-2 rounded-full bg-ea-green" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-ea-grey">
+                    Analysis Mode:
+                  </span>
+                  <span className="text-xs font-extrabold text-ea-white">
+                    {mode === 'quote' ? 'Checking an Existing Quote' : 'New System Sizing'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => setMode('quote')}
+                    className={cn(
+                      'flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer',
+                      mode === 'quote'
+                        ? 'bg-ea-green text-ea-black shadow-md shadow-ea-green/20'
+                        : 'bg-ea-black/60 text-ea-white/70 hover:text-ea-white hover:bg-ea-black'
+                    )}
+                  >
+                    <FileText className="h-3.5 w-3.5" />
+                    <span>Quote Checker</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode('new')}
+                    className={cn(
+                      'flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer',
+                      mode === 'new'
+                        ? 'bg-ea-green text-ea-black shadow-md shadow-ea-green/20'
+                        : 'bg-ea-black/60 text-ea-white/70 hover:text-ea-white hover:bg-ea-black'
+                    )}
+                  >
+                    <Sun className="h-3.5 w-3.5" />
+                    <span>System Sizing</span>
+                  </button>
+                </div>
+              </div>
               {mode === 'quote' ? (
                 <>
                   {/* Quote Quick Upload / Paste Banner */}
@@ -1712,10 +1772,17 @@ export default function Calculator() {
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-ea-white mt-1">
                       {mode === 'quote' ? (
-                        <>
-                          Quoted Price:{' '}
-                          <span className="text-ea-green">{gbp(systemConfig.price)}</span>
-                        </>
+                        systemConfig.price > 0 ? (
+                          <>
+                            Quoted Price:{' '}
+                            <span className="text-ea-green">{gbp(systemConfig.price)}</span>
+                          </>
+                        ) : (
+                          <>
+                            Benchmark Value:{' '}
+                            <span className="text-ea-green">{gbp(fairRange[1])}</span>
+                          </>
+                        )
                       ) : (
                         <>
                           {systemConfig.kWp.toFixed(2)} kWp Solar{' '}
@@ -1732,7 +1799,11 @@ export default function Calculator() {
 
                   {mode === 'quote' && (
                     <div>
-                      {systemConfig.price <= fairRange[0] * 0.9 ? (
+                      {systemConfig.price <= 0 ? (
+                        <span className="rounded-full bg-ea-green/20 text-ea-green border border-ea-green/40 px-4 py-1.5 text-xs font-bold inline-block">
+                          UK Market Benchmark
+                        </span>
+                      ) : systemConfig.price <= fairRange[0] * 0.9 ? (
                         <span className="rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 px-4 py-1.5 text-xs font-bold inline-block">
                           Cheaper than Usual
                         </span>

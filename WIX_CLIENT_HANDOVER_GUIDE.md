@@ -108,6 +108,10 @@ The four core Energy Aftercare plans (**Bronze**, **Silver**, **Gold**, **Platin
 
 ## 🛠️ Section 2: Managing the Approved Installers Directory (`ApprovedInstallers`)
 
+> [!NOTE]
+> **Pre-Launch Note on Installer Listings:**
+> All placeholder/unapproved installer listings have been removed prior to launch per client instruction. The interactive map and search interface are ready and will automatically display your verified installer profiles as soon as you add them to the `ApprovedInstallers` collection in Wix CMS.
+
 Energy Aftercare features a selective, vetted network of MCS-certified solar and battery installers searchable by outward UK postcode and county on an interactive map.
 
 ### 🧭 Navigation Path
