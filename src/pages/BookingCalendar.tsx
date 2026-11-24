@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { Calendar } from '@project/components/ui/calendar';
-import { plansLiveOrder } from '../content/plans';
+import { plansLiveOrder, cleanPriceNumber } from '../content/plans';
 import { useSupportPlans } from '../wix/cms';
 import { FormField, TextAreaField } from '../components/FormField';
 import { btn, usePageMeta } from '../components/ui';
@@ -224,8 +224,14 @@ export default function BookingCalendar() {
                   {isVirtual ? 'Virtual Support Service' : 'Booked Service'}
                 </span>
                 <h3 className="text-xl font-bold text-ea-white mt-1">{plan.name}</h3>
+                <p className="text-[11px] text-ea-grey mt-0.5">Yearly plan exclusively for homeowners</p>
               </div>
-              <span className="text-2xl font-extrabold text-ea-green">{plan.price}</span>
+              <div className="text-right">
+                <span className="text-2xl font-extrabold text-ea-green">
+                  {cleanPriceNumber(plan.price)} <span className="text-base font-bold lowercase">+vat</span>
+                </span>
+                <span className="block text-[11px] text-ea-grey">/ year (+20% VAT)</span>
+              </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 text-xs">
@@ -305,9 +311,11 @@ export default function BookingCalendar() {
               </p>
             </div>
             <div className="text-left md:text-right">
-              <span className="text-3xl sm:text-4xl font-black text-ea-green">{plan.price}</span>
+              <span className="text-3xl sm:text-4xl font-black text-ea-green">
+                {cleanPriceNumber(plan.price)} <span className="text-2xl font-bold lowercase">+vat</span>
+              </span>
               <p className="text-xs text-ea-grey mt-0.5">
-                Fixed Price • 0% VAT Included ({isVirtual ? 'Virtual Support' : 'In-Person Support'})
+                Yearly Homeowner Plan • 20% VAT applies ({isVirtual ? 'Virtual Support' : 'In-Person Support'})
               </p>
             </div>
           </div>
@@ -552,8 +560,16 @@ export default function BookingCalendar() {
                   {isVirtual ? 'Virtual Consultation Summary' : 'Booking Summary'}
                 </span>
                 <div className="mt-1 flex items-baseline justify-between">
-                  <h3 className="text-xl font-extrabold text-ea-white">{plan.name}</h3>
-                  <span className="text-2xl font-black text-ea-green">{plan.price}</span>
+                  <div>
+                    <h3 className="text-xl font-extrabold text-ea-white">{plan.name}</h3>
+                    <span className="text-[11px] text-ea-grey">Yearly Homeowner Plan</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-2xl font-black text-ea-green">
+                      {cleanPriceNumber(plan.price)} <span className="text-base font-bold lowercase">+vat</span>
+                    </span>
+                    <span className="block text-[11px] text-ea-grey">/ yr (+20% VAT)</span>
+                  </div>
                 </div>
                 <div className="mt-2 flex items-center gap-2 text-xs text-ea-grey">
                   <Clock className="h-3.5 w-3.5 text-ea-green" />

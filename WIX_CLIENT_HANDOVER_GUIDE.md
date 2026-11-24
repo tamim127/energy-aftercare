@@ -245,7 +245,7 @@ All plan purchases redirect to the official, encrypted **Wix Hosted Checkout**.
 ### 💷 Currency & 0% VAT Compliance
 - **Currency:** Set to **GBP (£)**.
 - **UK Renewable VAT Relief:** Under UK legislation, domestic renewable energy installations and associated maintenance services benefit from **0% VAT**.
-- All checkout totals reflect clean fixed pricing (£79, £149, £299, £449) with 0% VAT.
+- All plans are exclusively for residential homeowners, billed yearly (£79, £149, £299, £449 + 20% VAT as a service). The UI automatically displays the "+vat" notation.
 
 ---
 

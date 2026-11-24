@@ -5,7 +5,7 @@ import { contact } from '../content/site';
 import { usePageContent, useServicesList, useSiteSettings } from '../wix/cms';
 import { Section, Reveal, Card, BtnLink, Eyebrow } from '../components/ui';
 import { usePageMeta } from '../components/ui';
-import EnergyScroll from '../components/EnergyScroll';
+import CalculatorPreview from '../components/CalculatorPreview';
 import { PlansGrid } from '../components/PlanCard';
 import ContactForm from '../components/ContactForm';
 
@@ -64,7 +64,7 @@ export default function Home() {
   return (
     <>
       <Hero page={page} />
-      <EnergyScroll secondaryImage={page.secondaryImage} />
+      <CalculatorPreview />
 
       <Section tone="light">
         <Reveal>
@@ -91,7 +91,20 @@ export default function Home() {
       </Section>
 
       <Section tone="dark" id="plans">
-        <Reveal><h2 className="mb-12 text-4xl font-extrabold tracking-tight md:text-5xl">{supportPlansHeading}</h2></Reveal>
+        <Reveal>
+          <div className="mb-10 sm:mb-12 max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-ea-green/40 bg-ea-green/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-ea-green mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-ea-green" />
+              <span>For Homeowners Only • Yearly Subscription</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+              {supportPlansHeading}
+            </h2>
+            <p className="mt-3 text-base sm:text-lg text-ea-white/80 leading-relaxed">
+              These annual support and maintenance plans are exclusively for residential homeowners and are billed yearly. All plan prices are £X + 20% VAT as a professional service. (For commercial or installer technical partnerships, see our dedicated trade services).
+            </p>
+          </div>
+        </Reveal>
         <PlansGrid plans={plansAscending} />
       </Section>
 

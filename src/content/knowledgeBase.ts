@@ -36,61 +36,63 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
     keywords: ['price', 'pricing', 'cost', 'how much', 'fee', 'charge', 'rate'],
     title: 'Support Plans & Pricing',
     answer:
-      'We offer four transparent, fixed-price on-site support packages (0% VAT included for residential):\n\n' +
-      '• **Bronze Plan (£180)**: 1.5–2 hr essential annual checkup for newer solar systems.\n' +
-      '• **Silver Plan (£240)**: 2.5–3 hr performance diagnostic with thermal imaging scans.\n' +
-      '• **Gold Plan (£320)**: 3–4 hr in-depth diagnostic for combined solar PV & battery storage.\n' +
-      '• **Platinum Plan (£420)**: 4–5 hr complete health check for solar, battery, and EV charger setups.\n\n' +
+      'We offer four transparent, annual support plans exclusively for residential homeowners (billed yearly, subject to 20% VAT as a service):\n\n' +
+      '• **Bronze Plan (£79 +vat / year)**: 1 technical case & 1 virtual visit (apps, monitoring & operation guidance).\n' +
+      '• **Silver Plan (£149 +vat / year)**: 2 technical cases & 2 virtual visits with remote system health check.\n' +
+      '• **Gold Plan (£299 +vat / year)**: 4 technical cases, in-person on-site visits available, system yield & battery optimisation.\n' +
+      '• **Platinum Plan (£449 +vat / year)**: 6 technical cases, comprehensive annual on-site review, priority dispatch & discounted callouts.\n\n' +
       'Would you like to book an appointment or view full plan details?',
     action: { label: 'View All Plans', to: '/book-online' },
   },
   {
     keywords: ['bronze', 'basic'],
-    title: 'Bronze Support Plan (£180)',
+    title: 'Bronze Support Plan (£79 +vat)',
     answer:
-      'The **Bronze Plan (£180 inc. VAT)** is our essential annual checkup lasting 1.5–2 hours on-site. It includes:\n\n' +
-      '• Visual panel and roof bracket safety inspection\n' +
-      '• Inverter error log and diagnostic scan\n' +
-      '• AC/DC isolator electrical safety testing\n' +
-      '• Generation meter verification\n' +
-      '• Digital health & safety certificate',
-    action: { label: 'Book Bronze Plan', to: '/booking-calendar/bronze' },
+      'The **Bronze Plan (£79 +vat / year)** is our entry-level annual homeowner support plan. It includes:\n\n' +
+      '• 1 technical support case per year\n' +
+      '• 1 virtual visit (video/phone diagnostics & operation guidance)\n' +
+      '• Telemetry and inverter/battery cloud app support\n' +
+      '• Independent advice from certified UK renewable specialists\n' +
+      '• Billed yearly (+ 20% VAT applies as a service)',
+    action: { label: 'Book Bronze Plan', to: '/booking-calendar/bronze-support-plan' },
   },
   {
     keywords: ['silver', 'thermal', 'hotspot'],
-    title: 'Silver Support Plan (£240)',
+    title: 'Silver Support Plan (£149 +vat)',
     answer:
-      'The **Silver Plan (£240 inc. VAT)** is our comprehensive 2.5–3 hour diagnostic for systems 3+ years old. It includes everything in Bronze plus:\n\n' +
-      '• Thermal imaging scan for hot spots and microcracks\n' +
-      '• String voltage and open-circuit current verification\n' +
-      '• MC4 connector and junction box thermal inspection\n' +
-      '• Inverter efficiency benchmark report\n' +
-      '• Manufacturer warranty compliance report',
-    action: { label: 'Book Silver Plan', to: '/booking-calendar/silver' },
+      'The **Silver Plan (£149 +vat / year)** is our popular remote diagnostic package for residential setups. It includes:\n\n' +
+      '• 2 technical support cases per year\n' +
+      '• 2 virtual diagnostic visits\n' +
+      '• Comprehensive remote system health check & performance review\n' +
+      '• Monitoring app, firmware & telemetry troubleshooting\n' +
+      '• Billed yearly (+ 20% VAT applies as a service)',
+    action: { label: 'Book Silver Plan', to: '/booking-calendar/silver-support-plan' },
   },
   {
     keywords: ['gold', 'battery', 'storage', 'soh', 'degradation'],
-    title: 'Gold Support Plan (£320)',
+    title: 'Gold Support Plan (£299 +vat)',
     answer:
-      'The **Gold Plan (£320 inc. VAT)** is our dedicated 3–4 hour diagnostic for solar + battery storage systems. It includes everything in Silver plus:\n\n' +
-      '• Battery storage State-of-Health (SoH) diagnostics\n' +
-      '• Internal resistance and cell degradation check\n' +
-      '• Charge & discharge cycle benchmarking\n' +
-      '• Emergency EPS backup switchover test\n' +
-      '• Battery firmware and software updates',
-    action: { label: 'Book Gold Plan', to: '/booking-calendar/gold' },
+      'The **Gold Plan (£299 +vat / year)** is designed for homeowners wanting in-person specialist support. It includes:\n\n' +
+      '• 4 technical support cases per year\n' +
+      '• In-person on-site visit available with specialist engineer\n' +
+      '• System performance review & yield analysis\n' +
+      '• Battery optimisation & charge/discharge cycle tuning\n' +
+      '• Priority technical support & manufacturer liaison\n' +
+      '• Billed yearly (+ 20% VAT applies as a service)',
+    action: { label: 'Book Gold Plan', to: '/booking-calendar/gold-support-plan' },
   },
   {
     keywords: ['platinum', 'ev', 'charger', 'octopus', 'tariff', 'hybrid'],
-    title: 'Platinum Support Plan (£420)',
+    title: 'Platinum Support Plan (£449 +vat)',
     answer:
-      'The **Platinum Plan (£420 inc. VAT)** is our flagship 4–5 hour diagnostic for complex solar, battery, and EV charger setups. It includes everything in Gold plus:\n\n' +
-      '• EV charger integration and load balancing testing\n' +
-      '• Solar export optimization and smart tariff alignment\n' +
-      '• Full high-resolution thermal audit\n' +
-      '• Direct warranty claim escalation support with manufacturers\n' +
-      '• Priority engineer dispatch status',
-    action: { label: 'Book Platinum Plan', to: '/booking-calendar/platinum' },
+      'The **Platinum Plan (£449 +vat / year)** is our flagship executive tier for comprehensive peace of mind. It includes:\n\n' +
+      '• 6 technical support cases per year\n' +
+      '• Comprehensive annual on-site system review by Senior Specialist\n' +
+      '• Priority rapid engineer dispatch & discounted callout rates\n' +
+      '• Direct installer & equipment manufacturer warranty escalation\n' +
+      '• Complete solar, battery & EV charging diagnostics\n' +
+      '• Billed yearly (+ 20% VAT applies as a service)',
+    action: { label: 'Book Platinum Plan', to: '/booking-calendar/platinum-support-plan' },
   },
   {
     keywords: ['installer', 'approved', 'find installer', 'mcs', 'postcode', 'local installer', 'directory', 'map'],

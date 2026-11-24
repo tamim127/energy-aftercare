@@ -17,13 +17,27 @@ export interface Plan {
 export const bookNowLabel = 'Book Now';
 export const viewAllPlansLabel = 'View all plans';
 export const supportPlansHeading = 'Support & Maintenance Plans';
+export const homeownerNoticeBadge = 'For Homeowners Only • Yearly Subscription';
+export const homeownerNoticeDescription =
+  'These annual support and maintenance plans are exclusively for residential homeowners and are billed yearly. All prices are £X + 20% VAT as a service.';
+
+export function cleanPriceNumber(price: string): string {
+  if (!price) return '£0';
+  return price.replace(/\s*\+?\s*vat/i, '').trim();
+}
+
+export function formatPlanPrice(price: string): string {
+  if (!price) return '£0 +vat';
+  const clean = cleanPriceNumber(price);
+  return `${clean} +vat`;
+}
 
 // Live Book Online order: Platinum, Gold, Silver, Bronze
 export const plansLiveOrder: Plan[] = [
   {
     tier: 'platinum',
     name: 'Platinum Support Plan',
-    price: '£449',
+    price: '£449 +vat',
     slug: 'platinum-support-plan',
     summary:
       '6 cases, priority support, annual system review and discounted site visits. Highest level of homeowner support.',
@@ -47,7 +61,7 @@ export const plansLiveOrder: Plan[] = [
   {
     tier: 'gold',
     name: 'Gold Support Plan',
-    price: '£299',
+    price: '£299 +vat',
     slug: 'gold-support-plan',
     summary:
       '4 cases, priority support, performance and battery optimisation reviews; in-person support available.',
@@ -72,7 +86,7 @@ export const plansLiveOrder: Plan[] = [
   {
     tier: 'silver',
     name: 'Silver Support Plan',
-    price: '£149',
+    price: '£149 +vat',
     slug: 'silver-support-plan',
     summary:
       '2 cases, 2 virtual visits, including remote health check. Enhanced monitoring for standard residential setups.',
@@ -96,7 +110,7 @@ export const plansLiveOrder: Plan[] = [
   {
     tier: 'bronze',
     name: 'Bronze Support Plan',
-    price: '£79',
+    price: '£79 +vat',
     slug: 'bronze-support-plan',
     summary:
       '1 case, 1 virtual visit (apps, monitoring, operation). Straightforward technical guidance throughout the year.',

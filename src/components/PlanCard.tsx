@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Clock, Shield } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
-import { bookNowLabel, viewAllPlansLabel, type Plan, type Tier } from '../content/plans';
+import { bookNowLabel, viewAllPlansLabel, cleanPriceNumber, type Plan, type Tier } from '../content/plans';
 import { btn } from './ui';
 
 // Tier accents expressed as neutral/green gradients so they stay on-brand.
@@ -27,7 +27,12 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
     >
       <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', s.bar)} />
       <div className="flex items-center justify-between">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-ea-grey">{plan.tier}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-ea-grey">{plan.tier}</p>
+          <span className="rounded bg-ea-green/10 border border-ea-green/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-ea-green">
+            Homeowner • Yearly
+          </span>
+        </div>
         <span
           className={cn(
             'flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
@@ -55,15 +60,17 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
         {plan.summary}
       </p>
 
-      <div className="mt-5 flex items-baseline gap-2 border-y border-ea-grey/15 py-3">
-        <span className={cn('font-black tracking-tight text-ea-green', large ? 'text-5xl' : 'text-4xl')}>
-          {plan.price}
-        </span>
-        <span className="text-xs text-ea-grey">
-          {plan.tier === 'gold' || plan.tier === 'platinum'
-            ? '/ in-person support (0% VAT)'
-            : '/ virtual support (0% VAT)'}
-        </span>
+      <div className="mt-5 border-y border-ea-grey/15 py-3">
+        <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1">
+          <span className={cn('font-black tracking-tight text-ea-green', large ? 'text-4xl sm:text-5xl' : 'text-3xl sm:text-4xl')}>
+            {cleanPriceNumber(plan.price)}
+            <span className="text-xl sm:text-2xl font-bold text-ea-green ml-1.5 lowercase">+vat</span>
+          </span>
+          <span className="text-xs font-semibold text-ea-white/80">/ year</span>
+        </div>
+        <p className="mt-1 text-[11px] text-ea-white/65">
+          Homeowner yearly plan • 20% VAT applies ({plan.tier === 'gold' || plan.tier === 'platinum' ? 'in-person support available' : 'virtual support'})
+        </p>
       </div>
 
       {/* Key Inclusions */}
