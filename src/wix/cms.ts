@@ -374,6 +374,13 @@ export interface CMSPageContent {
   section3Body?: string;
   ctaHeading?: string;
   ctaButtonText?: string;
+  plansHeading?: string;
+  plansNotice?: string;
+  plansDescription?: string;
+  calculatorPreviewBadge?: string;
+  calculatorPreviewHeading?: string;
+  calculatorPreviewBody?: string;
+  calculatorPreviewButton?: string;
 }
 
 export const defaultPagesContent: Record<string, CMSPageContent> = {
@@ -392,6 +399,13 @@ export const defaultPagesContent: Record<string, CMSPageContent> = {
     section3Body: 'Human, independent, and technical guidance focused entirely on your energy efficiency, not hardware sales agendas.',
     ctaHeading: homeContent.journey.heading,
     ctaButtonText: homeContent.contact.heading,
+    plansHeading: 'Support & Maintenance Plans',
+    plansNotice: 'For Homeowners Only • Yearly Subscription',
+    plansDescription: 'These annual support and maintenance plans are exclusively for residential homeowners and are billed yearly. All plan prices are £X + 20% VAT as a service.',
+    calculatorPreviewBadge: 'Free Online Solar Tool',
+    calculatorPreviewHeading: 'Have an installer quote or planning a solar system?',
+    calculatorPreviewBody: 'Use our independent, hardware-agnostic calculator to check whether an installer quote is genuinely fair against UK regional benchmarks, verify equipment warranties, or estimate solar generation, battery payback and annual savings.',
+    calculatorPreviewButton: 'Launch Quote Checker',
   },
   about: {
     pageKey: 'about',
@@ -422,6 +436,9 @@ export const defaultPagesContent: Record<string, CMSPageContent> = {
     section3Body: servicesContent.sections[2]?.body || '',
     ctaHeading: servicesContent.sections[4]?.heading || 'The Specialist Difference',
     ctaButtonText: 'Book Online',
+    plansHeading: 'Support & Maintenance Plans',
+    plansNotice: 'For Homeowners Only • Yearly Subscription',
+    plansDescription: 'These support and maintenance plans are exclusively for residential homeowners and are billed yearly. All plan fees are subject to 20% VAT as a service (£X +vat).',
   },
   'installer-support': {
     pageKey: 'installer-support',
@@ -444,7 +461,7 @@ export const defaultPagesContent: Record<string, CMSPageContent> = {
     pageName: 'Manufacturer Support Page',
     heroHeading: manufacturerContent.heading,
     heroSubheading: 'Hardware-Agnostic & Independent',
-    heroBody: `${manufacturerContent.intro}\n\n${manufacturerContent.blocks.join('\n\n')}`,
+    heroBody: manufacturerContent.intro,
     ctaHeading: manufacturerContent.ctaText,
     ctaButtonText: manufacturerContent.ctaButton,
   },
@@ -496,6 +513,13 @@ export async function fetchPagesContent(): Promise<Record<string, CMSPageContent
       section3Body: raw.section3Body || base.section3Body,
       ctaHeading: raw.ctaHeading || base.ctaHeading,
       ctaButtonText: raw.ctaButtonText || base.ctaButtonText,
+      plansHeading: raw.plansHeading || base.plansHeading,
+      plansNotice: raw.plansNotice || base.plansNotice,
+      plansDescription: raw.plansDescription || base.plansDescription,
+      calculatorPreviewBadge: raw.calculatorPreviewBadge || base.calculatorPreviewBadge,
+      calculatorPreviewHeading: raw.calculatorPreviewHeading || base.calculatorPreviewHeading,
+      calculatorPreviewBody: raw.calculatorPreviewBody || base.calculatorPreviewBody,
+      calculatorPreviewButton: raw.calculatorPreviewButton || base.calculatorPreviewButton,
     };
   }
 

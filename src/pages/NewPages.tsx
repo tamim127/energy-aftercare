@@ -68,16 +68,16 @@ export function ManufacturerSupport() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-ea-black text-ea-white">
         <div className="pointer-events-none absolute right-0 top-0 h-[480px] w-[480px] rounded-full bg-ea-green/10 blur-[130px]" />
-        <div className="ea-container relative py-12 sm:py-20 md:py-24">
+        <div className={`ea-container relative py-12 sm:py-20 md:py-24 ${page.heroImage ? 'grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]' : ''}`}>
           <Reveal>
             <span className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-ea-green text-ea-black shadow-lg">
               <Factory className="h-6 w-6 sm:h-7 sm:w-7" />
             </span>
             <h1 className="mt-6 sm:mt-8 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl">
-              {m.heading}
+              {page.heroHeading || m.heading}
             </h1>
             <p className="mt-4 sm:mt-6 max-w-3xl text-base sm:text-lg md:text-xl text-ea-white/85 leading-relaxed">
-              {m.intro}
+              {page.heroBody || m.intro}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -90,6 +90,18 @@ export function ManufacturerSupport() {
               </button>
             </div>
           </Reveal>
+          {page.heroImage && (
+            <Reveal delay={0.1}>
+              <div className="relative mx-auto max-w-[480px]">
+                <div className="absolute -inset-3 rounded-[28px] border border-ea-green/30" aria-hidden="true" />
+                <img
+                  src={page.heroImage}
+                  alt={page.heroHeading || 'Manufacturer Support'}
+                  className="relative rounded-2xl border border-ea-grey/30 w-full object-cover shadow-2xl"
+                />
+              </div>
+            </Reveal>
+          )}
         </div>
       </section>
 

@@ -264,15 +264,85 @@ The Solar, Battery & EV Charging FAQ page is dynamic and searchable.
 
 ---
 
-## 🌐 Section 7: Page Text & Site Settings (`PageContent` & `SiteSettings`)
+## 🌐 Section 7: Managing Page Text, Images & Site Settings (`PageContent`, `SiteSettings` & `ServicesList`)
 
-### 🏢 Site-Wide Contact Info (`SiteSettings`)
-> **Wix Dashboard** ➔ **CMS** ➔ **Collections** ➔ **`SiteSettings`**
-- Update your official phone number (`+44 7943 812137`), email (`admin@energyaftercare.co.uk`), office hours, or social media links in one place. Changes reflect across the header, footer, and contact sections.
+To give Josh and the Energy Aftercare team complete freedom to customize any page's headings, introductory copy, buttons, badges, and imagery without developers, we have integrated three comprehensive CMS collections:
 
-### 📝 Page Hero Headings & Subheadings (`PageContent`)
-> **Wix Dashboard** ➔ **CMS** ➔ **Collections** ➔ **`PageContent`**
-- Adjust promotional banners, hero headlines, and call-to-action buttons for individual pages (`home`, `about`, `services`, `manufacturer-support`, `installer-support`).
+---
+
+### 📄 1. Page Content & Media (`PageContent`)
+> **Wix Dashboard** ➔ **CMS** ➔ **Collections** ➔ Click on **`PageContent`**
+
+Every public page has a row identified by its unique **`pageKey`**:
+- **`home`** — Homepage Hero, Calculator preview section, Services intro, and Support Plans banner
+- **`about`** — About Us Page (Company origin, mission, values, and image)
+- **`services`** — Services Overview Page (Advice, diagnostics, and homeowner packages)
+- **`installer-support`** — Installer Support Page (Hero copy, value proposition, and hero image)
+- **`manufacturer-support`** — Manufacturer Support Page (Partnership headline, intro, and hero image)
+
+#### 📋 Full Field Reference for `PageContent`
+| Field Name | Type | Description | Live Display Location |
+|:---|:---|:---|:---|
+| `pageKey` | Text (Key) | Unique identifier: `home`, `about`, `services`, `installer-support`, `manufacturer-support` | System routing key (Do not change) |
+| `pageName` | Text | Human-friendly title (e.g. `Home Page`) | Dashboard reference only |
+| `heroHeading` | Text | Main H1 title on the page | Page hero top title |
+| `heroSubheading`| Text | Eyebrow text above the main title | Top green pill or eyebrow |
+| `heroBody` | Long Text | Main introductory paragraph | Hero paragraph |
+| `heroImage` | Image / Media | Upload any image from Wix Media Manager or paste an image URL | Displays in hero section (About, Installer, Manufacturer, Home) |
+| `secondaryImage`| Image / Media | Secondary illustration or photo | Mid-page image slots |
+| `heroPrimaryCta`| Text | Text on main primary button (e.g. `Get Support`) | Primary action button |
+| `heroSecondaryCta`| Text | Text on secondary outline button (e.g. `About Us`) | Secondary button |
+| `section2Heading`| Text | Title of the second section | Mid-page section title |
+| `section2Subheading`| Text | Subtitle / eyebrow for section 2 | Mid-page badge |
+| `section2Body` | Long Text | Paragraph copy for section 2 | Mid-page copy |
+| `section3Heading`| Text | Title of the third section | Third section title |
+| `section3Body` | Long Text | Paragraph copy for section 3 | Third section copy |
+| `ctaHeading` | Text | Headline in bottom CTA banner | Bottom call-to-action banner |
+| `ctaButtonText` | Text | Label for bottom CTA button | Bottom action button |
+| `plansHeading` | Text | Section heading above the support plans | Pricing section title |
+| `plansNotice` | Text | Badge above plans (e.g. `For Homeowners Only • Yearly Subscription`) | Green pill above plan cards |
+| `plansDescription`| Long Text | Explanation text above the plan cards | Pricing section subtitle |
+| `calculatorPreviewBadge` | Text | Badge on homepage calculator preview box | Free Online Solar Tool pill |
+| `calculatorPreviewHeading`| Text | Headline inside calculator preview box | Calculator box headline |
+| `calculatorPreviewBody` | Long Text | Description inside calculator preview box | Calculator box description |
+| `calculatorPreviewButton` | Text | Button text inside calculator preview box | Calculator launch button |
+
+#### 🖼️ How to Upload or Change Page Images in Wix CMS
+1. In Wix Dashboard, navigate to **CMS** ➔ **Collections** ➔ **`PageContent`**.
+2. Locate the page you want to update (e.g. `installer-support` or `about`).
+3. Click on the **`heroImage`** cell.
+4. Click **Add Media** (or **Replace Media**) to open the Wix Media Manager:
+   - Select any image already uploaded to your Wix account, OR
+   - Drag & drop a new photo from your computer (`.jpg`, `.png`, `.webp`).
+5. Click **Apply**.
+6. The frontend automatically translates the internal Wix media identifier into a high-speed CDN image URL (`https://static.wixstatic.com/media/...`) and displays it live on reload!
+
+---
+
+### 🌟 2. Homepage Services & Feature Cards (`ServicesList`)
+> **Wix Dashboard** ➔ **CMS** ➔ **Collections** ➔ Click on **`ServicesList`**
+
+Controls the 6 feature cards under the "Services" section on the homepage:
+| Field Name | Type | Description | Options |
+|:---|:---|:---|:---|
+| `title` | Text | Feature title (e.g. `Solar Optimisation`) | Any title |
+| `body` | Long Text | Feature description | 1-2 concise sentences |
+| `iconName` | Text | Lucide icon name | `Sun`, `BatteryCharging`, `PlugZap`, `Activity`, `KeyRound`, `Compass` |
+| `page` | Text | Target page | Set to `Home` |
+| `order` | Number | Display position (1 to 6) | Numerical order |
+
+---
+
+### 🏢 3. Site-Wide Contact Info & Social Links (`SiteSettings`)
+> **Wix Dashboard** ➔ **CMS** ➔ **Collections** ➔ Click on **`SiteSettings`**
+
+Allows you to update global business details in a single location:
+- **`companyName`**: `Energy Aftercare`
+- **`phone`**: `+44 7943 812137` (used for header phone button and contact sections)
+- **`email`**: `admin@energyaftercare.co.uk`
+- **`officeHours`**: `Mon – Fri: 08:30 – 17:30`
+- **`copyright`**: `© 2026 Energy Aftercare Ltd. All rights reserved.`
+- **`facebookUrl`**, **`instagramUrl`**, **`youtubeUrl`**, **`xUrl`**, **`linkedinUrl`**: Social media profile links displayed in the website footer.
 
 ---
 

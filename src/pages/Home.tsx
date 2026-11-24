@@ -23,7 +23,7 @@ function Hero({ page }: { page: any }) {
   return (
     <section className="relative overflow-hidden bg-ea-black text-ea-white">
       <div className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-ea-green/10 blur-[120px]" />
-      <div className="ea-container relative py-12 sm:py-16 md:py-24">
+      <div className={`ea-container relative py-12 sm:py-16 md:py-24 ${page.heroImage ? 'grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]' : ''}`}>
         <Reveal>
           <Eyebrow>{page.heroSubheading || c.hero.eyebrow}</Eyebrow>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold leading-[1.08] tracking-tight max-w-4xl">
@@ -49,6 +49,18 @@ function Hero({ page }: { page: any }) {
             </BtnLink>
           </div>
         </Reveal>
+        {page.heroImage && (
+          <Reveal delay={0.1}>
+            <div className="relative mx-auto max-w-[480px]">
+              <div className="absolute -inset-3 rounded-[28px] border border-ea-green/30" aria-hidden="true" />
+              <img
+                src={page.heroImage}
+                alt={page.heroHeading || 'Energy Aftercare'}
+                className="relative rounded-2xl border border-ea-grey/30 w-full object-cover shadow-2xl"
+              />
+            </div>
+          </Reveal>
+        )}
       </div>
     </section>
   );
@@ -64,7 +76,7 @@ export default function Home() {
   return (
     <>
       <Hero page={page} />
-      <CalculatorPreview />
+      <CalculatorPreview page={page} />
 
       <Section tone="light">
         <Reveal>
@@ -95,13 +107,14 @@ export default function Home() {
           <div className="mb-10 sm:mb-12 max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-ea-green/40 bg-ea-green/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-ea-green mb-4">
               <span className="h-1.5 w-1.5 rounded-full bg-ea-green" />
-              <span>For Homeowners Only • Yearly Subscription</span>
+              <span>{page.plansNotice || 'For Homeowners Only • Yearly Subscription'}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-              {supportPlansHeading}
+              {page.plansHeading || supportPlansHeading}
             </h2>
             <p className="mt-3 text-base sm:text-lg text-ea-white/80 leading-relaxed">
-              These annual support and maintenance plans are exclusively for residential homeowners and are billed yearly. All plan prices are £X + 20% VAT as a professional service. (For commercial or installer technical partnerships, see our dedicated trade services).
+              {page.plansDescription ||
+                'These annual support and maintenance plans are exclusively for residential homeowners and are billed yearly. All plan prices are £X + 20% VAT as a professional service. (For commercial or installer technical partnerships, see our dedicated trade services).'}
             </p>
           </div>
         </Reveal>

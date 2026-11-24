@@ -340,12 +340,146 @@ async function createDocx() {
             ],
           }),
 
-          // Section 7: Quick Reference Operational Cheat Sheet
+          // Section 7: Managing Page Text, Images & Site Settings
           new Paragraph({
             heading: HeadingLevel.HEADING_1,
             spacing: { before: 300, after: 160 },
             children: [
-              new TextRun({ text: '7. Quick Reference Operational Cheat Sheet', bold: true, color: '107C41' }),
+              new TextRun({ text: '7. Managing Page Text, Images & Site Settings', bold: true, color: '107C41' }),
+            ],
+          }),
+          new Paragraph({
+            spacing: { after: 140 },
+            children: [
+              new TextRun({
+                text: 'Energy Aftercare is designed so that Josh and the management team can customize any page’s headlines, body copy, promotional badges, and images without technical developers. Three dedicated Wix CMS collections govern page presentation:\n\n',
+              }),
+              new TextRun({ text: 'A. PageContent Collection (Navigation: CMS ➔ Collections ➔ PageContent)\n', bold: true }),
+              new TextRun({
+                text: 'Stores page-by-page headlines, paragraphs, CTA buttons, and hero images. Each row is keyed by its unique pageKey: home, about, services, installer-support, manufacturer-support.\n',
+              }),
+            ],
+          }),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  createCell('Field Name', true, false, 25),
+                  createCell('Field Type', true, false, 20),
+                  createCell('Description & Purpose', true, false, 35),
+                  createCell('Target Location', true, false, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('pageKey', false, false, 25),
+                  createCell('Text (Key)', false, false, 20),
+                  createCell('Unique identifier (home, about, services, installer-support, manufacturer-support)', false, false, 35),
+                  createCell('Routing Key', false, false, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('heroHeading', false, true, 25),
+                  createCell('Text', false, true, 20),
+                  createCell('Main H1 title on the page', false, true, 35),
+                  createCell('Page Top Title', false, true, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('heroSubheading', false, false, 25),
+                  createCell('Text', false, false, 20),
+                  createCell('Eyebrow text or badge above the H1 title', false, false, 35),
+                  createCell('Top Eyebrow', false, false, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('heroBody', false, true, 25),
+                  createCell('Long Text', false, true, 20),
+                  createCell('Main introductory paragraph / value statement', false, true, 35),
+                  createCell('Hero Paragraph', false, true, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('heroImage', false, false, 25),
+                  createCell('Image / Media', false, false, 20),
+                  createCell('Upload from Wix Media Manager or paste an image URL', false, false, 35),
+                  createCell('Hero Visual Slot', false, false, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('heroPrimaryCta', false, true, 25),
+                  createCell('Text', false, true, 20),
+                  createCell('Primary green action button text (e.g. Get Support)', false, true, 35),
+                  createCell('Primary Button', false, true, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('heroSecondaryCta', false, false, 25),
+                  createCell('Text', false, false, 20),
+                  createCell('Secondary outline button text (e.g. About Us)', false, false, 35),
+                  createCell('Secondary Button', false, false, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('plansHeading', false, true, 25),
+                  createCell('Text', false, true, 20),
+                  createCell('Title above Support & Maintenance Plans section', false, true, 35),
+                  createCell('Home & Services', false, true, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('plansNotice', false, false, 25),
+                  createCell('Text', false, false, 20),
+                  createCell('Badge above plans (e.g. For Homeowners Only • Yearly Subscription)', false, false, 35),
+                  createCell('Home & Services', false, false, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('calculatorPreviewHeading', false, true, 25),
+                  createCell('Text', false, true, 20),
+                  createCell('Headline inside homepage Free Solar Quote Checker box', false, true, 35),
+                  createCell('Home Page', false, true, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('calculatorPreviewButton', false, false, 25),
+                  createCell('Text', false, false, 20),
+                  createCell('CTA button text (e.g. Launch Quote Checker)', false, false, 35),
+                  createCell('Home Page', false, false, 20),
+                ],
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: { before: 160, after: 140 },
+            children: [
+              new TextRun({ text: 'How to Upload & Update Images in Wix CMS:\n', bold: true }),
+              new TextRun({ text: '1. In Wix Dashboard, navigate to CMS ➔ Collections ➔ PageContent.\n' }),
+              new TextRun({ text: '2. Click the heroImage or secondaryImage cell for the target page.\n' }),
+              new TextRun({ text: '3. Select Add Media to open the Wix Media Manager, or drag and drop a high-resolution PNG/JPG from your computer.\n' }),
+              new TextRun({ text: '4. Click Apply. The frontend automatically optimizes and serves the image via the Wix high-speed CDN.\n\n' }),
+              new TextRun({ text: 'B. SiteSettings Collection (Navigation: CMS ➔ Collections ➔ SiteSettings)\n', bold: true }),
+              new TextRun({ text: 'Manage global company phone (+44 7943 812137), email (admin@energyaftercare.co.uk), office hours, copyright notice, and social media URLs in one place across all headers and footers.' }),
+            ],
+          }),
+
+          // Section 8: Quick Reference Operational Cheat Sheet
+          new Paragraph({
+            heading: HeadingLevel.HEADING_1,
+            spacing: { before: 300, after: 160 },
+            children: [
+              new TextRun({ text: '8. Quick Reference Operational Cheat Sheet', bold: true, color: '107C41' }),
             ],
           }),
           new Table({
@@ -367,51 +501,58 @@ async function createDocx() {
               }),
               new TableRow({
                 children: [
-                  createCell('Publish a newly vetted installer', false, true, 35),
-                  createCell('CMS ➔ Collections ➔ ApprovedInstallers (+ Add Item)', false, true, 45),
+                  createCell('Change any page headline, body or image', false, true, 35),
+                  createCell('CMS ➔ Collections ➔ PageContent', false, true, 45),
                   createCell('Immediate', false, true, 20),
                 ],
               }),
               new TableRow({
                 children: [
-                  createCell('Temporarily hide / pause an installer', false, false, 35),
-                  createCell('CMS ➔ Collections ➔ ApprovedInstallers (Set status = paused)', false, false, 45),
+                  createCell('Publish a newly vetted installer', false, false, 35),
+                  createCell('CMS ➔ Collections ➔ ApprovedInstallers (+ Add Item)', false, false, 45),
                   createCell('Immediate', false, false, 20),
                 ],
               }),
               new TableRow({
                 children: [
-                  createCell('View upcoming customer bookings', false, true, 35),
-                  createCell('Booking Calendar ➔ View Schedule', false, true, 45),
-                  createCell('Real-time', false, true, 20),
+                  createCell('Temporarily hide / pause an installer', false, true, 35),
+                  createCell('CMS ➔ Collections ➔ ApprovedInstallers (Set status = paused)', false, true, 45),
+                  createCell('Immediate', false, true, 20),
                 ],
               }),
               new TableRow({
                 children: [
-                  createCell('Block holiday / vacation hours', false, false, 35),
-                  createCell('Booking Calendar ➔ Click date/time ➔ Block Time', false, false, 45),
+                  createCell('View upcoming customer bookings', false, false, 35),
+                  createCell('Booking Calendar ➔ View Schedule', false, false, 45),
                   createCell('Real-time', false, false, 20),
                 ],
               }),
               new TableRow({
                 children: [
-                  createCell('Review manufacturer inquiry or quote lead', false, true, 35),
-                  createCell('Communications ➔ Inbox', false, true, 45),
+                  createCell('Block holiday / vacation hours', false, true, 35),
+                  createCell('Booking Calendar ➔ Click date/time ➔ Block Time', false, true, 45),
                   createCell('Real-time', false, true, 20),
                 ],
               }),
               new TableRow({
                 children: [
-                  createCell('Add or modify FAQ question & answer', false, false, 35),
-                  createCell('CMS ➔ Collections ➔ FAQs', false, false, 45),
-                  createCell('Immediate', false, false, 20),
+                  createCell('Review manufacturer inquiry or quote lead', false, false, 35),
+                  createCell('Communications ➔ Inbox', false, false, 45),
+                  createCell('Real-time', false, false, 20),
                 ],
               }),
               new TableRow({
                 children: [
-                  createCell('Update company telephone / email', false, true, 35),
-                  createCell('CMS ➔ Collections ➔ SiteSettings', false, true, 45),
+                  createCell('Add or modify FAQ question & answer', false, true, 35),
+                  createCell('CMS ➔ Collections ➔ FAQs', false, true, 45),
                   createCell('Immediate', false, true, 20),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell('Update company telephone / email', false, false, 35),
+                  createCell('CMS ➔ Collections ➔ SiteSettings', false, false, 45),
+                  createCell('Immediate', false, false, 20),
                 ],
               }),
             ],

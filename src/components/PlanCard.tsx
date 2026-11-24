@@ -26,18 +26,18 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
       )}
     >
       <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', s.bar)} />
-      <div className="flex items-center justify-between gap-1 sm:gap-2">
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
-          <p className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-ea-grey whitespace-nowrap shrink-0">
+      <div className="flex items-center justify-between gap-1 w-full overflow-hidden">
+        <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 shrink-0">
+          <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] text-ea-grey whitespace-nowrap shrink-0">
             {plan.tier}
           </p>
-          <span className="whitespace-nowrap shrink-0 rounded bg-ea-green/10 border border-ea-green/30 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-ea-green">
+          <span className="whitespace-nowrap shrink-0 rounded bg-ea-green/10 border border-ea-green/30 px-1.5 py-0.5 text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-tight text-ea-green">
             Homeowner • Yearly
           </span>
         </div>
         <span
           className={cn(
-            'whitespace-nowrap shrink-0 flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold',
+            'whitespace-nowrap shrink-0 flex items-center gap-1 rounded-full border px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-semibold',
             plan.tier === 'gold' || plan.tier === 'platinum'
               ? 'border-ea-green/30 bg-ea-green/10 text-ea-green'
               : 'border-ea-grey/30 bg-ea-black text-ea-white/80'
@@ -45,11 +45,13 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
         >
           {plan.tier === 'gold' || plan.tier === 'platinum' ? (
             <>
-              <Shield className="h-3 w-3 text-ea-green shrink-0" /> In-Person Available
+              <Shield className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-ea-green shrink-0" />
+              <span>In-Person Available</span>
             </>
           ) : (
             <>
-              <Clock className="h-3 w-3 text-ea-green shrink-0" /> Virtual Visit
+              <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-ea-green shrink-0" />
+              <span>Virtual Visit</span>
             </>
           )}
         </span>

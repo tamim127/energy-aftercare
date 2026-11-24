@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Calculator, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Reveal, BtnLink } from './ui';
 
-export default function CalculatorPreview() {
+export default function CalculatorPreview({ page }: { page?: any }) {
   return (
     <section className="relative bg-ea-black text-ea-white py-14 sm:py-20 border-t border-ea-grey/15">
       <div className="ea-container">
@@ -16,15 +16,16 @@ export default function CalculatorPreview() {
               <div className="lg:col-span-7 xl:col-span-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-ea-green/40 bg-ea-green/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-ea-green">
                   <Calculator className="h-3.5 w-3.5" />
-                  <span>Free Online Solar Tool</span>
+                  <span>{page?.calculatorPreviewBadge || 'Free Online Solar Tool'}</span>
                 </div>
 
                 <h2 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-ea-white">
-                  Have an installer quote or planning a solar system?
+                  {page?.calculatorPreviewHeading || 'Have an installer quote or planning a solar system?'}
                 </h2>
 
                 <p className="mt-3 text-sm sm:text-base text-ea-white/80 leading-relaxed max-w-2xl">
-                  Use our independent, hardware-agnostic calculator to check whether an installer quote is genuinely fair against UK regional benchmarks, verify equipment warranties, or estimate solar generation, battery payback and annual savings.
+                  {page?.calculatorPreviewBody ||
+                    'Use our independent, hardware-agnostic calculator to check whether an installer quote is genuinely fair against UK regional benchmarks, verify equipment warranties, or estimate solar generation, battery payback and annual savings.'}
                 </p>
 
                 <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-xs sm:text-sm text-ea-white/75">
@@ -85,7 +86,7 @@ export default function CalculatorPreview() {
                       className="w-full text-center justify-center shadow-lg shadow-ea-green/20"
                     >
                       <Calculator className="h-4 w-4" />
-                      <span>Launch Quote Checker</span>
+                      <span>{page?.calculatorPreviewButton || 'Launch Quote Checker'}</span>
                       <ArrowRight className="h-4 w-4" />
                     </BtnLink>
                     <p className="mt-2.5 text-center text-[11px] text-ea-white/50">
