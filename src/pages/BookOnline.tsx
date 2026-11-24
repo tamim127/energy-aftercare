@@ -68,7 +68,7 @@ export default function BookOnline() {
             </span>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
+          <div className="grid gap-4 sm:gap-5 xl:gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
             {plans.map((p, i) => (
               <Reveal key={p.slug} delay={i * 0.06} className="h-full">
                 <PlanCard plan={p} large />

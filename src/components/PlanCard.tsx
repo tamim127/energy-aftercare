@@ -18,24 +18,26 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
   return (
     <article
       className={cn(
-        'ea-glow relative flex h-full flex-col overflow-hidden rounded-3xl border bg-ea-ink p-6 text-ea-white transition-all',
+        'ea-glow relative flex h-full flex-col overflow-hidden rounded-3xl border bg-ea-ink text-ea-white transition-all',
+        large ? 'p-5 sm:p-6 xl:p-8' : 'p-4 sm:p-5 xl:p-6',
         s.ring,
         plan.tier === 'platinum' &&
           'bg-gradient-to-b from-ea-ink2 to-ea-black shadow-[0_0_60px_-20px_rgba(0,229,117,0.3)] lg:-translate-y-2',
-        large && 'p-8',
       )}
     >
       <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', s.bar)} />
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-ea-grey">{plan.tier}</p>
-          <span className="rounded bg-ea-green/10 border border-ea-green/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-ea-green">
+      <div className="flex items-center justify-between gap-1 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+          <p className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-ea-grey whitespace-nowrap shrink-0">
+            {plan.tier}
+          </p>
+          <span className="whitespace-nowrap shrink-0 rounded bg-ea-green/10 border border-ea-green/30 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-ea-green">
             Homeowner • Yearly
           </span>
         </div>
         <span
           className={cn(
-            'flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+            'whitespace-nowrap shrink-0 flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold',
             plan.tier === 'gold' || plan.tier === 'platinum'
               ? 'border-ea-green/30 bg-ea-green/10 text-ea-green'
               : 'border-ea-grey/30 bg-ea-black text-ea-white/80'
@@ -43,11 +45,11 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
         >
           {plan.tier === 'gold' || plan.tier === 'platinum' ? (
             <>
-              <Shield className="h-3 w-3 text-ea-green" /> In-Person Available
+              <Shield className="h-3 w-3 text-ea-green shrink-0" /> In-Person Available
             </>
           ) : (
             <>
-              <Clock className="h-3 w-3 text-ea-green" /> Virtual Visit
+              <Clock className="h-3 w-3 text-ea-green shrink-0" /> Virtual Visit
             </>
           )}
         </span>
@@ -99,7 +101,7 @@ export function PlanCard({ plan, large }: { plan: Plan; large?: boolean }) {
 export function PlansGrid({ plans, showAll = true }: { plans: Plan[]; showAll?: boolean }) {
   return (
     <div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
+      <div className="grid gap-4 sm:gap-5 xl:gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
         {plans.map((p) => (
           <PlanCard key={p.slug} plan={p} />
         ))}
