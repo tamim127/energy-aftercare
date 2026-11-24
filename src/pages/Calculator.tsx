@@ -24,6 +24,7 @@ import {
   Info,
   Check,
   Loader2,
+  Lock,
 } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import { btn, Reveal, usePageMeta } from '../components/ui';
@@ -204,18 +205,18 @@ export default function Calculator() {
   }, [searchParams]);
 
   /* ---------- Quote Mode State ---------- */
-  const [qPanels, setQPanels] = useState<number>(8);
-  const [qWatt, setQWatt] = useState<number>(440);
+  const [qPanels, setQPanels] = useState<number | ''>('');
+  const [qWatt, setQWatt] = useState<number | ''>('');
   const [qPanelBrand, setQPanelBrand] = useState<string>('');
-  const [qBattUnits, setQBattUnits] = useState<number>(1);
-  const [qBatt, setQBatt] = useState<number>(10);
+  const [qBattUnits, setQBattUnits] = useState<number | ''>('');
+  const [qBatt, setQBatt] = useState<number | ''>('');
   const [qBattV, setQBattV] = useState<'HV' | 'LV' | ''>('');
   const [qBattBrand, setQBattBrand] = useState<string>('');
   const [qInvType, setQInvType] = useState<'hybrid' | 'string' | 'ac' | 'micro' | ''>('hybrid');
-  const [qInvKw, setQInvKw] = useState<number>(5);
+  const [qInvKw, setQInvKw] = useState<number | ''>('');
   const [qPhase, setQPhase] = useState<'1' | '3' | ''>('1');
   const [qInvBrand, setQInvBrand] = useState<string>('');
-  const [qPrice, setQPrice] = useState<number | ''>(9800);
+  const [qPrice, setQPrice] = useState<number | ''>('');
   const [qInstaller, setQInstaller] = useState<string>('');
 
   // BOS & installation items
@@ -244,7 +245,7 @@ export default function Calculator() {
   /* ---------- New System Mode State ---------- */
   const [sysType, setSysType] = useState<'hybrid' | 'ongrid' | 'offgrid'>('hybrid');
   const [nKwp, setNKwp] = useState<number | ''>('');
-  const [nRoof, setNRoof] = useState<number>(12);
+  const [nRoof, setNRoof] = useState<number | ''>('');
   const [nPanelBrand, setNPanelBrand] = useState<string>('');
   const [nBattKwh, setNBattKwh] = useState<number | ''>('');
   const [nBattV, setNBattV] = useState<'HV' | 'LV' | ''>('');
@@ -255,7 +256,7 @@ export default function Calculator() {
 
   /* ---------- Home & Energy Usage State ---------- */
   const [postcode, setPostcode] = useState<string>('');
-  const [usage, setUsage] = useState<number>(2700);
+  const [usage, setUsage] = useState<number | ''>('');
   const [usagePer, setUsagePer] = useState<number>(1); // 1 = year, 12 = month, 4 = quarter, 365 = day
   const [supplier, setSupplier] = useState<string>('Octopus Energy');
   const [tariff, setTariff] = useState<'svt' | 'fixed' | 'e7' | 'tou' | 'agile'>('svt');
@@ -297,46 +298,59 @@ export default function Calculator() {
   const regionInfo = useMemo(() => getRegion(postcode), [postcode]);
 
   const totalConsumption = useMemo(() => {
-    let base = (usage || 0) * usagePer;
+    const rawUsage = typeof usage === 'number' && usage > 0 ? usage : 0;
+    let base = rawUsage * usagePer;
     CONFIG.LOADS.forEach((l, i) => {
       if (loadsState[i] === 'plan') {
         base += l.kwh;
       }
     });
-    return Math.max(300, base);
+    return base;
   }, [usage, usagePer, loadsState]);
 
   // System parameters for calculation
   const systemConfig = useMemo(() => {
     if (mode === 'quote') {
-      const panels = qPanels || 0;
-      const kWp = (panels * (qWatt || CONFIG.DEFAULT_PANEL_W)) / 1000;
-      const batt = qBatt || 0;
+      const panels = typeof qPanels === 'number' && qPanels > 0 ? qPanels : 0;
+      const watt = typeof qWatt === 'number' && qWatt > 0 ? qWatt : CONFIG.DEFAULT_PANEL_W;
+      const kWp = panels > 0 ? Number(((panels * watt) / 1000).toFixed(2)) : 0;
+      const batt = typeof qBatt === 'number' && qBatt > 0 ? qBatt : 0;
+      const price = typeof qPrice === 'number' && qPrice > 0 ? qPrice : 0;
+      const invKw =
+        typeof qInvKw === 'number' && qInvKw > 0
+          ? qInvKw
+          : kWp > 0
+          ? Math.max(3.6, Number((kWp * 0.85).toFixed(1)))
+          : 0;
+
       return {
         panels,
         kWp,
         batt,
         phase: qPhase || '1',
-        inv: qInvType,
-        invKw: qInvKw || 5,
+        inv: qInvType || 'hybrid',
+        invKw,
         extras: { xEv, xBird, xBackup, xOpt },
-        price: qPrice || 0,
+        price,
         offgrid: false,
         suggested: { kwp: false, batt: false, inv: false },
       };
     } else {
       // Sizing mode
       const perPanel = CONFIG.DEFAULT_PANEL_W / 1000;
-      let panels: number;
-      let kWp: number;
+      let panels = 0;
+      let kWp = 0;
       if (typeof nKwp === 'number' && nKwp > 0) {
         kWp = nKwp;
         panels = Math.max(1, Math.round(kWp / perPanel));
-      } else {
+      } else if (typeof nRoof === 'number' && nRoof > 0) {
+        panels = nRoof;
+        kWp = +(panels * perPanel).toFixed(2);
+      } else if (totalConsumption > 0) {
         const target =
           (totalConsumption * (sysType === 'offgrid' ? 1.6 : 1.1)) /
           (regionInfo.yieldPerKw * orient * shade);
-        panels = Math.max(6, Math.min(nRoof, Math.round(target / perPanel)));
+        panels = Math.max(6, Math.min(18, Math.round(target / perPanel)));
         kWp = +(panels * perPanel).toFixed(2);
       }
 
@@ -344,23 +358,23 @@ export default function Calculator() {
       if (sysType !== 'ongrid') {
         if (typeof nBattKwh === 'number' && nBattKwh > 0) {
           batt = nBattKwh;
-        } else {
+        } else if (totalConsumption > 0) {
           const daily = totalConsumption / 365;
           const want =
             sysType === 'offgrid'
               ? daily * 1.5
               : daily * (['e7', 'tou', 'agile'].includes(tariff) ? 0.7 : 0.5);
-          batt = STD_BATT.find((x) => x >= want) || 25;
+          batt = STD_BATT.find((x) => x >= want) || 10;
         }
       }
 
-      let invKw: number;
+      let invKw = 0;
       if (typeof nInvKw === 'number' && nInvKw > 0) {
         invKw = nInvKw;
-      } else {
+      } else if (kWp > 0) {
         let want = Math.max(kWp * 0.85, sysType === 'offgrid' ? 5 : 3);
         if (nPhase !== '3') want = Math.min(want, kWp > 4.5 ? 5 : 3.6);
-        invKw = STD_INV.find((x) => x >= want) || 20;
+        invKw = STD_INV.find((x) => x >= want) || 5;
       }
 
       return {
@@ -406,9 +420,12 @@ export default function Calculator() {
     nPhase,
   ]);
 
-  // Price range calculation
+  // Price range calculation based strictly on user's system size
   const fairRange = useMemo(() => {
     const s = systemConfig;
+    if (s.kWp === 0 && s.batt === 0) {
+      return [0, 0, 0];
+    }
     const out = [0, 0, 0];
     for (let i = 0; i < 3; i++) {
       if (s.kWp > 0) out[i] += CONFIG.SOLAR_FIXED[i] + s.kWp * CONFIG.SOLAR_PER_KW[i];
@@ -438,6 +455,31 @@ export default function Calculator() {
     const yieldPerKw = regionInfo.yieldPerKw;
     const effRate = rate || CONFIG.IMPORT_P;
     const effOff = ['e7', 'tou', 'agile'].includes(tariff) && s.batt > 0 ? offRate : null;
+
+    if ((s.kWp === 0 && s.batt === 0) || cons === 0) {
+      return {
+        gen: 0,
+        direct: 0,
+        fromBatt: 0,
+        exported: 0,
+        wasted: 0,
+        shift: 0,
+        billSave: 0,
+        exportInc: 0,
+        shiftSave: 0,
+        standing: 0,
+        totalAnnual: 0,
+        selfShare: 0,
+        effectiveCost: mode === 'quote' && s.price > 0 ? s.price : 0,
+        paybackYears: 0,
+        lifetimeReturn: 0,
+        planSlug: 'gold-support-plan',
+        planName: 'Gold Support Plan',
+        planPrice: '£299',
+        planReason:
+          '4 cases, priority support, performance and battery optimisation reviews; in-person support available.',
+      };
+    }
 
     const gen = s.kWp * yieldPerKw * orient * shade;
     const f = { out: 0.25, part: 0.35, home: 0.45 }[occ];
@@ -470,15 +512,18 @@ export default function Calculator() {
     const selfShare = cons > 0 ? (direct + fromBatt + shift) / cons : 0;
 
     const effectiveCost =
-      mode === 'quote' && s.price && s.price > 0 ? s.price : fairRange[1] || 9500;
-    const paybackYears = totalAnnual > 0 && effectiveCost > 0 ? effectiveCost / totalAnnual : Infinity;
+      mode === 'quote' ? (s.price > 0 ? s.price : 0) : (fairRange[1] > 0 ? fairRange[1] : 0);
+    const paybackYears = totalAnnual > 0 && effectiveCost > 0 ? effectiveCost / totalAnnual : 0;
 
     // 25-year lifetime return with 0.5% yearly degradation & £1000 inverter replacement
     let lifetimeTotal = 0;
     for (let y = 0; y < 25; y++) {
       lifetimeTotal += totalAnnual * Math.pow(0.995, y);
     }
-    const lifetimeReturn = Math.round(lifetimeTotal - effectiveCost - 1000);
+    const lifetimeReturn =
+      effectiveCost > 0 && lifetimeTotal > 0
+        ? Math.round(lifetimeTotal - effectiveCost - 1000)
+        : 0;
 
     // Aftercare Plan Recommendation
     let planSlug = 'gold-support-plan';
@@ -659,25 +704,119 @@ export default function Calculator() {
   /* =========================================================================
      NAVIGATION & VALIDATION
      ========================================================================= */
-  const handleProceedToStep3 = () => {
+  const validateStep2 = (): boolean => {
     setErrorMessage('');
     if (mode === 'quote') {
-      if (qPanels <= 0 && qBatt <= 0) {
-        setErrorMessage('Please specify either the number of solar panels or battery size.');
-        return;
+      const panels = typeof qPanels === 'number' ? qPanels : 0;
+      const batt = typeof qBatt === 'number' ? qBatt : 0;
+      if (panels <= 0 && batt <= 0) {
+        setErrorMessage('Please enter your solar panel count or battery size from your installer quote.');
+        const el = document.getElementById('q-panels-input');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+        return false;
+      }
+      const price = typeof qPrice === 'number' ? qPrice : 0;
+      if (price <= 0) {
+        setErrorMessage('Please enter the total quoted price (£) from your installer quote.');
+        const el = document.getElementById('q-price-input');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+        return false;
+      }
+    } else {
+      // Sizing Mode
+      const kwp = typeof nKwp === 'number' ? nKwp : 0;
+      const roof = typeof nRoof === 'number' ? nRoof : 0;
+      const batt = typeof nBattKwh === 'number' ? nBattKwh : 0;
+      if (kwp <= 0 && roof <= 0 && batt <= 0) {
+        setErrorMessage('Please select your estimated roof space or enter your target solar array size (kWp).');
+        const el = document.getElementById('n-roof-input');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+        return false;
       }
     }
-    setStep(3);
-    window.scrollTo({ top: 120, behavior: 'smooth' });
+    return true;
+  };
+
+  const validateStep3 = (): boolean => {
+    setErrorMessage('');
+    if (!validateStep2()) {
+      setStep(2);
+      return false;
+    }
+    if (!postcode || !postcode.trim()) {
+      setErrorMessage('Please enter your UK postcode (e.g. BS1 4DJ or SW1A) so we can look up your local solar yield.');
+      const el = document.getElementById('calc-postcode-input');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return false;
+    }
+    const rawUsage = typeof usage === 'number' ? usage : 0;
+    if (rawUsage < 100) {
+      setErrorMessage('Please enter your electricity consumption in kWh (or click one of the household presets below).');
+      const el = document.getElementById('calc-usage-input');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return false;
+    }
+    return true;
+  };
+
+  const handleStepClick = (targetStep: number) => {
+    if (targetStep === step) return;
+    setErrorMessage('');
+    if (targetStep < step) {
+      // Always allow reviewing earlier steps
+      setStep(targetStep);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+      return;
+    }
+    if (targetStep === 2) {
+      setStep(2);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+      return;
+    }
+    if (targetStep === 3) {
+      if (!validateStep2()) return;
+      setStep(3);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+      return;
+    }
+    if (targetStep === 4) {
+      if (!validateStep2()) return;
+      if (!validateStep3()) return;
+      setStep(4);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+      return;
+    }
+  };
+
+  const handleProceedToStep3 = () => {
+    if (validateStep2()) {
+      setErrorMessage('');
+      setStep(3);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
   };
 
   const handleCalculate = () => {
-    setErrorMessage('');
-    if (!usage || usage < 100) {
-      setUsage(2700);
+    if (validateStep3()) {
+      setErrorMessage('');
+      setStep(4);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
     }
-    setStep(4);
-    window.scrollTo({ top: 120, behavior: 'smooth' });
   };
 
   return (
@@ -707,20 +846,21 @@ export default function Calculator() {
                 <button
                   key={s.n}
                   type="button"
-                  onClick={() => {
-                    setStep(s.n);
-                    window.scrollTo({ top: 120, behavior: 'smooth' });
-                  }}
+                  onClick={() => handleStepClick(s.n)}
                   className={cn(
                     'rounded-full px-4 py-2 font-bold transition-all border flex items-center gap-1.5 cursor-pointer',
                     step === s.n
                       ? 'border-ea-green bg-ea-green text-ea-black shadow-[0_0_20px_rgba(0,229,117,0.3)]'
                       : s.n < step
                       ? 'border-ea-green/40 bg-ea-green/10 text-ea-green hover:bg-ea-green/20'
-                      : 'border-ea-grey/25 bg-ea-ink text-ea-white/80 hover:border-ea-grey/50 hover:text-ea-white'
+                      : 'border-ea-grey/25 bg-ea-ink text-ea-white/60 hover:border-ea-grey/50 hover:text-ea-white'
                   )}
                 >
-                  {s.n < step && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                  {s.n < step ? (
+                    <Check className="h-3.5 w-3.5 stroke-[3]" />
+                  ) : s.n > step ? (
+                    <Lock className="h-3 w-3 text-ea-grey/70" />
+                  ) : null}
                   {s.label}
                 </button>
               ))}
@@ -935,24 +1075,34 @@ export default function Calculator() {
                     </h3>
                     <div className="grid gap-4 sm:grid-cols-3">
                       <div>
-                        <label className="text-xs font-semibold text-ea-grey">Number of Panels</label>
+                        <label className="text-xs font-semibold text-ea-grey">
+                          Number of Panels <span className="text-ea-green">*</span>
+                        </label>
                         <input
+                          id="q-panels-input"
                           type="number"
                           min={0}
                           max={80}
+                          placeholder="e.g. 10"
                           value={qPanels}
-                          onChange={(e) => setQPanels(parseInt(e.target.value) || 0)}
+                          onChange={(e) =>
+                            setQPanels(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
+                          }
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm font-bold text-ea-white focus:border-ea-green focus:outline-none"
                         />
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-ea-grey">Panel Size (Watts)</label>
                         <input
+                          id="q-watt-input"
                           type="number"
                           min={200}
                           max={700}
+                          placeholder="e.g. 440"
                           value={qWatt}
-                          onChange={(e) => setQWatt(parseInt(e.target.value) || 0)}
+                          onChange={(e) =>
+                            setQWatt(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
+                          }
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm font-bold text-ea-white focus:border-ea-green focus:outline-none"
                         />
                       </div>
@@ -970,7 +1120,9 @@ export default function Calculator() {
                     <div className="text-xs text-ea-white/70">
                       Total Array Peak Power:{' '}
                       <strong className="text-ea-green">
-                        {((qPanels * (qWatt || 440)) / 1000).toFixed(2)} kWp
+                        {typeof qPanels === 'number' && qPanels > 0
+                          ? `${((qPanels * (typeof qWatt === 'number' && qWatt > 0 ? qWatt : 440)) / 1000).toFixed(2)} kWp`
+                          : '0.00 kWp'}
                       </strong>
                     </div>
                   </div>
@@ -987,8 +1139,11 @@ export default function Calculator() {
                           type="number"
                           min={0}
                           max={10}
+                          placeholder="e.g. 1"
                           value={qBattUnits}
-                          onChange={(e) => setQBattUnits(parseInt(e.target.value) || 0)}
+                          onChange={(e) =>
+                            setQBattUnits(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
+                          }
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm font-bold text-ea-white focus:border-ea-green focus:outline-none"
                         />
                       </div>
@@ -997,12 +1152,16 @@ export default function Calculator() {
                           Total Usable Capacity (kWh)
                         </label>
                         <input
+                          id="q-batt-input"
                           type="number"
                           step="0.5"
                           min={0}
                           max={60}
+                          placeholder="e.g. 10 (or 0 if none)"
                           value={qBatt}
-                          onChange={(e) => setQBatt(parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            setQBatt(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
+                          }
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm font-bold text-ea-white focus:border-ea-green focus:outline-none"
                         />
                       </div>
@@ -1056,12 +1215,16 @@ export default function Calculator() {
                       <div>
                         <label className="text-xs font-semibold text-ea-grey">Inverter Size (kW)</label>
                         <input
+                          id="q-inv-input"
                           type="number"
                           step="0.1"
                           min={1}
                           max={30}
+                          placeholder="e.g. 5"
                           value={qInvKw}
-                          onChange={(e) => setQInvKw(parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            setQInvKw(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
+                          }
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm font-bold text-ea-white focus:border-ea-green focus:outline-none"
                         />
                       </div>
@@ -1249,13 +1412,18 @@ export default function Calculator() {
                     </h3>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
-                        <label className="text-xs font-semibold text-ea-grey">Total Price (£)</label>
+                        <label className="text-xs font-semibold text-ea-grey">
+                          Total Price (£) <span className="text-ea-green">*</span>
+                        </label>
                         <input
+                          id="q-price-input"
                           type="number"
                           step="100"
-                          placeholder="Not stated"
+                          placeholder="e.g. 8500"
                           value={qPrice}
-                          onChange={(e) => setQPrice(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                          onChange={(e) =>
+                            setQPrice(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
+                          }
                           className="mt-1.5 w-full rounded-2xl border border-ea-green/50 bg-ea-black px-4 py-3 text-2xl font-black text-ea-green focus:border-ea-green focus:outline-none"
                         />
                         <p className="mt-1 text-xs text-ea-grey">
@@ -1329,12 +1497,13 @@ export default function Calculator() {
                     <div className="grid gap-4 sm:grid-cols-3">
                       <div>
                         <label className="text-xs font-semibold text-ea-grey">
-                          Solar Size (kWp) <span className="text-ea-grey/60">(Leave blank to auto-size)</span>
+                          Solar Size (kWp) <span className="text-ea-grey/60">(or select roof size below)</span>
                         </label>
                         <input
+                          id="n-kwp-input"
                           type="number"
                           step="0.2"
-                          placeholder="Auto-suggested"
+                          placeholder="e.g. 4.4"
                           value={nKwp}
                           onChange={(e) =>
                             setNKwp(e.target.value === '' ? '' : parseFloat(e.target.value))
@@ -1343,12 +1512,18 @@ export default function Calculator() {
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-ea-grey">Estimated Roof Space</label>
+                        <label className="text-xs font-semibold text-ea-grey">
+                          Estimated Roof Space <span className="text-ea-green">*</span>
+                        </label>
                         <select
+                          id="n-roof-input"
                           value={nRoof}
-                          onChange={(e) => setNRoof(parseInt(e.target.value))}
+                          onChange={(e) =>
+                            setNRoof(e.target.value === '' ? '' : parseInt(e.target.value))
+                          }
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm text-ea-white focus:border-ea-green focus:outline-none"
                         >
+                          <option value="">Select roof space...</option>
                           <option value="8">Small Roof (~8 panels / 3.5 kWp)</option>
                           <option value="12">Medium Roof (~12 panels / 5.2 kWp)</option>
                           <option value="18">Large Roof (~18 panels / 7.9 kWp)</option>
@@ -1507,9 +1682,10 @@ export default function Calculator() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-xs font-semibold text-ea-grey">
-                      Postcode (UK Outward Code)
+                      Postcode (UK Outward Code) <span className="text-ea-green">*</span>
                     </label>
                     <input
+                      id="calc-postcode-input"
                       type="text"
                       placeholder="e.g. BS1 4DJ, SW1A 1AA, M1 1AE"
                       value={postcode}
@@ -1523,13 +1699,19 @@ export default function Calculator() {
                     </p>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-ea-grey">Electricity Use</label>
+                    <label className="text-xs font-semibold text-ea-grey">
+                      Annual Electricity Use <span className="text-ea-green">*</span>
+                    </label>
                     <div className="mt-1.5 flex gap-2">
                       <input
+                        id="calc-usage-input"
                         type="number"
                         min={100}
+                        placeholder="e.g. 2900"
                         value={usage}
-                        onChange={(e) => setUsage(parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          setUsage(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
+                        }
                         className="w-2/3 rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm font-bold text-ea-white focus:border-ea-green focus:outline-none"
                       />
                       <select
@@ -1758,11 +1940,38 @@ export default function Calculator() {
              STEP 4: FULL RESULTS & BREAKDOWN
              ================================================================= */}
           {step === 4 && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-8"
-            >
+            (systemConfig.panels === 0 && systemConfig.batt === 0 && systemConfig.kWp === 0) ||
+            !postcode ||
+            totalConsumption === 0 ? (
+              <div className="rounded-3xl border border-ea-green/30 bg-ea-ink p-8 sm:p-12 text-center space-y-5 max-w-2xl mx-auto shadow-2xl">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ea-green/10 border border-ea-green/30 text-ea-green mx-auto">
+                  <Sliders className="h-8 w-8" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-ea-white">
+                  System &amp; Usage Information Required
+                </h2>
+                <p className="text-sm text-ea-white/75 leading-relaxed">
+                  To calculate your accurate payback period, MCS fair price benchmark, and 25-year financial return based on real numbers, please complete your quote or system details first.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep(2);
+                      window.scrollTo({ top: 120, behavior: 'smooth' });
+                    }}
+                    className={cn(btn.primary, 'px-8 py-3.5 text-sm inline-flex items-center gap-2 cursor-pointer')}
+                  >
+                    <ArrowLeft className="h-4 w-4" /> Go to Step 2 to Enter Details
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
               {/* Verdict Card */}
               <div className="rounded-3xl border border-ea-green/40 bg-ea-ink p-6 md:p-8 space-y-6 shadow-2xl relative overflow-hidden">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-ea-grey/20 pb-5">
@@ -1820,23 +2029,82 @@ export default function Calculator() {
                   )}
                 </div>
 
-                {/* Price Benchmark Range Visualization */}
-                <div>
-                  <div className="flex justify-between items-baseline text-xs font-semibold text-ea-grey mb-2">
-                    <span>UK Fair Market Estimate (MCS averages)</span>
-                    <span className="text-ea-white">
-                      {gbp(fairRange[0])} — {gbp(fairRange[2])}
-                    </span>
-                  </div>
-
-                  <div className="relative h-6 w-full rounded-full bg-ea-black border border-ea-grey/30 overflow-hidden flex items-center px-1">
-                    <div className="h-3 w-full rounded-full bg-ea-green/20 flex items-center justify-between px-3 text-[10px] font-bold text-ea-green">
-                      <span>Low: {gbp(fairRange[0])}</span>
-                      <span>Typical: {gbp(fairRange[1])}</span>
-                      <span>High: {gbp(fairRange[2])}</span>
+                {/* Price Benchmark Range Visualization - Premium Redesign */}
+                <div className="rounded-2xl border border-ea-grey/25 bg-ea-black/60 p-5 sm:p-6 space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-ea-green" />
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-ea-white">
+                          UK Fair Market Price Benchmark
+                        </h4>
+                      </div>
+                      <p className="text-xs text-ea-grey mt-0.5">
+                        Independent guide based on typical UK MCS certified installation costs (0% VAT).
+                      </p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-ea-green/40 bg-ea-green/10 px-4 py-1.5 text-xs font-bold text-ea-green self-start sm:self-auto">
+                      <span>Fair Market Span:</span>
+                      <strong className="text-ea-white">{gbp(fairRange[0])} — {gbp(fairRange[2])}</strong>
                     </div>
                   </div>
-                  <p className="mt-2 text-[11px] text-ea-grey">
+
+                  {/* 3 Pillar Range Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    <div className="rounded-2xl border border-ea-grey/20 bg-ea-ink p-4 text-center sm:text-left transition-all hover:border-ea-grey/40">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-ea-grey block">
+                        Competitive / Low
+                      </span>
+                      <p className="text-lg sm:text-xl font-extrabold text-ea-white mt-1">
+                        {gbp(fairRange[0])}
+                      </p>
+                      <span className="text-[11px] text-ea-white/60 block mt-0.5">
+                        Budget-conscious standard install
+                      </span>
+                    </div>
+
+                    <div className="rounded-2xl border border-ea-green/50 bg-ea-green/10 p-4 text-center sm:text-left shadow-[0_0_25px_rgba(0,229,117,0.18)] relative">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-ea-green block flex items-center justify-center sm:justify-between">
+                        Typical UK Average
+                        <span className="hidden sm:inline-block h-2 w-2 rounded-full bg-ea-green animate-pulse" />
+                      </span>
+                      <p className="text-xl sm:text-2xl font-black text-ea-green mt-1">
+                        {gbp(fairRange[1])}
+                      </p>
+                      <span className="text-[11px] text-ea-green/80 block mt-0.5">
+                        Most common fair market price
+                      </span>
+                    </div>
+
+                    <div className="rounded-2xl border border-ea-grey/20 bg-ea-ink p-4 text-center sm:text-left transition-all hover:border-ea-grey/40">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-ea-grey block">
+                        Upper / Premium
+                      </span>
+                      <p className="text-lg sm:text-xl font-extrabold text-ea-white mt-1">
+                        {gbp(fairRange[2])}
+                      </p>
+                      <span className="text-[11px] text-ea-white/60 block mt-0.5">
+                        Premium hardware &amp; complex roof
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Visual Spectrum Bar */}
+                  <div className="space-y-2 pt-2">
+                    <div className="relative h-4 w-full rounded-full bg-ea-black border border-ea-grey/30 overflow-hidden p-0.5">
+                      <div className="h-full w-full bg-gradient-to-r from-ea-green/30 via-ea-green to-ea-green/40 rounded-full" />
+                      {/* Midpoint marker for typical price */}
+                      <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-ea-white shadow-md -translate-x-1/2 rounded-full" />
+                    </div>
+
+                    <div className="flex justify-between text-xs text-ea-grey font-semibold px-1">
+                      <span>Low: <strong className="text-ea-white">{gbp(fairRange[0])}</strong></span>
+                      <span className="text-ea-green font-bold">Typical: {gbp(fairRange[1])}</span>
+                      <span>High: <strong className="text-ea-white">{gbp(fairRange[2])}</strong></span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-ea-grey/80 leading-relaxed border-t border-ea-grey/15 pt-3">
                     *Independent guide based on typical UK MCS certified installer costs (0% VAT). Excludes
                     unusual structural repairs, slate roofs, or complex cable trenches.
                   </p>
@@ -2236,7 +2504,7 @@ export default function Calculator() {
                 </button>
               </div>
             </motion.div>
-          )}
+          ))}
         </div>
       </main>
 
