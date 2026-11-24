@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { format, isBefore, startOfToday, isWeekend } from 'date-fns';
+import { isBookingDateDisabled, getUkBankHolidayName } from '../lib/ukBankHolidays';
 import {
   ArrowLeft,
   CalendarCheck,
@@ -138,6 +139,8 @@ export default function BookingCalendar() {
       next.slot = isVirtual
         ? 'Please select an available virtual appointment date and time'
         : 'Please select an available appointment date and arrival time';
+    } else if (isBookingDateDisabled(date)) {
+      next.slot = 'Selected date falls on a weekend or UK Bank Holiday. Please choose a Monday–Friday date.';
     }
     setErrs(next);
 
@@ -273,8 +276,8 @@ export default function BookingCalendar() {
           </div>
 
           <div className="pt-4 flex flex-wrap justify-center gap-4">
-            <Link to="/book-online" className={cn(btn.primary, 'py-3 px-8 text-xs font-bold')}>
-              Book Another Service
+            <Link to="/services#packages" className={cn(btn.primary, 'py-3 px-8 text-xs font-bold')}>
+              Browse Other Support Plans
             </Link>
             <Link to="/" className={cn(btn.outlineDark, 'py-3 px-8 text-xs font-bold')}>
               Return to Homepage
@@ -291,7 +294,7 @@ export default function BookingCalendar() {
         {/* Navigation Breadcrumb */}
         <div>
           <Link
-            to="/book-online"
+            to="/services#packages"
             className="inline-flex items-center gap-2 text-xs font-bold text-ea-grey hover:text-ea-green transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Support Plans
@@ -408,20 +411,30 @@ export default function BookingCalendar() {
               <div className="grid gap-6 sm:grid-cols-2">
                 {/* Calendar */}
                 <div className="rounded-2xl border border-ea-grey/20 bg-ea-black/50 p-4">
-                  <p className="mb-2 text-xs font-bold text-ea-grey uppercase tracking-wider">
-                    Preferred Date
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold text-ea-grey uppercase tracking-wider">
+                      Preferred Date
+                    </p>
+                    <span className="text-[10px] text-ea-green font-semibold">Mon–Fri Only</span>
+                  </div>
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={(d) => {
+                      if (d && isBookingDateDisabled(d)) return;
                       setDate(d);
                       setSlot(undefined);
                       setErrs((prev) => ({ ...prev, slot: '' }));
                     }}
-                    disabled={(d) => isBefore(d, startOfToday()) || isWeekend(d)}
+                    disabled={isBookingDateDisabled}
                     className="text-ea-white mx-auto"
                   />
+                  <div className="mt-3 pt-2.5 border-t border-ea-grey/15 text-center">
+                    <p className="text-[11px] text-ea-white/60">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-ea-green mr-1.5 align-middle" />
+                      Weekends &amp; UK Bank Holidays are blocked out
+                    </p>
+                  </div>
                 </div>
 
                 {/* Slots */}

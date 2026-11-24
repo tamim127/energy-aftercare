@@ -15,17 +15,13 @@ export const nav: NavItem[] = [
     to: '/services',
     children: [
       { label: 'Services Overview', to: '/services' },
-      { label: 'Book Online', to: '/book-online' },
+      { label: 'Installer Support', to: '/installer-support' },
       { label: 'Free Solar Quote Checker', to: '/calculator' },
     ],
   },
   {
     label: 'Approved Installers',
     to: '/approved-installers',
-    children: [
-      { label: 'Find Approved Installers', to: '/approved-installers' },
-      { label: 'Installer Support & Partnership', to: '/installer-support' },
-    ],
   },
   { label: 'Manufacturer Support', to: '/manufacturer-support' },
   { label: 'FAQ', to: '/faq' },

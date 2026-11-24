@@ -6,7 +6,7 @@ import { wixFetch } from './sdk';
 import { ensureTokens } from './members/auth';
 import { normalizePhoneNumber } from './bookings';
 
-export type InquiryType = 'Contact' | 'Installer' | 'Calculator' | 'InstallerQuote' | 'Booking';
+export type InquiryType = 'Contact' | 'Installer' | 'Calculator' | 'InstallerQuote' | 'Booking' | 'InstallerBooking';
 
 export interface SubmitInquiryParams {
   name: string;

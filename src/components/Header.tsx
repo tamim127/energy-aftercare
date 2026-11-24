@@ -373,13 +373,13 @@ export default function Header() {
                         </Link>
 
                         <Link
-                          to="/book-online"
+                          to="/installer-support"
                           onClick={() => setMobile(false)}
                           className="flex flex-col items-center justify-center p-3 rounded-2xl border border-ea-grey/25 bg-ea-ink text-center hover:border-ea-green/50 transition-all group"
                         >
-                          <Calendar className="h-5 w-5 text-ea-green mb-1 group-hover:scale-110 transition-transform" />
-                          <span className="text-xs font-bold text-ea-white leading-tight">Book Visit</span>
-                          <span className="text-[10px] text-ea-grey mt-0.5">Engineers</span>
+                          <ShieldCheck className="h-5 w-5 text-ea-green mb-1 group-hover:scale-110 transition-transform" />
+                          <span className="text-xs font-bold text-ea-white leading-tight">Installer Support</span>
+                          <span className="text-[10px] text-ea-grey mt-0.5">Partnership</span>
                         </Link>
                       </div>
                     </div>

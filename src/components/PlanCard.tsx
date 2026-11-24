@@ -109,7 +109,7 @@ export function PlansGrid({ plans, showAll = true }: { plans: Plan[]; showAll?: 
       {showAll && (
         <div className="mt-12 text-center">
           <Link
-            to="/book-online"
+            to="/services#packages"
             className="inline-flex items-center gap-2 font-bold text-ea-green hover:underline cursor-pointer text-sm"
           >
             {viewAllPlansLabel} <ArrowRight className="h-4 w-4" />

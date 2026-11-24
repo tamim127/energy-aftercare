@@ -45,7 +45,7 @@ export default function Services() {
             </Reveal>
           ))}
         </div>
-        <div className="mt-10 text-center"><BtnLink to="/book-online">{page.heroSecondaryCta || c.bookOnlineButton} <ArrowRight className="h-4 w-4" /></BtnLink></div>
+        <div className="mt-10 text-center"><BtnLink to="#packages">{page.heroSecondaryCta || c.bookOnlineButton} <ArrowRight className="h-4 w-4" /></BtnLink></div>
       </Section>
 
       <Section tone="light" id={c.advice.id}>
