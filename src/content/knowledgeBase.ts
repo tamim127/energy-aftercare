@@ -27,7 +27,7 @@ CRITICAL GUARDRAILS & BOUNDARIES:
    - Homeowners can evaluate existing quotes or review system sizing, missing BOS items, warranties, and payback period.
 7. DIRECT CONTACT:
    - Phone: 07943 812137 (+44 7943 812137)
-   - Email: admin@energyaftercare.co.uk
+   - Email: info@energyaftercare.co.uk
    - Support hours: Monday to Friday, 9:00 AM to 5:00 PM.
    - Location: Bristol & nationwide coverage across England and Wales.`;
 
@@ -124,7 +124,7 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
     answer:
       'You can speak directly with our friendly technical team:\n\n' +
       '• **Telephone**: 07943 812137 (+44 7943 812137)\n' +
-      '• **Email**: admin@energyaftercare.co.uk\n' +
+      '• **Email**: info@energyaftercare.co.uk\n' +
       '• **Hours**: Monday to Friday, 9:00 AM – 5:00 PM\n' +
       '• **Headquarters**: Bristol, serving clients across the UK.',
   },
@@ -235,7 +235,7 @@ export function queryKnowledgeBase(query: string): {
       "• **Finding an Approved Installer** near your postcode\n" +
       "• **Our Free Solar Quote Checker**\n" +
       "• **Booking a virtual consultation or in-person engineer visit**\n" +
-      "• **Contacting our team** (07943 812137 / admin@energyaftercare.co.uk)\n\n" +
+      "• **Contacting our team** (07943 812137 / info@energyaftercare.co.uk)\n\n" +
       "What would you like to know more about?",
     action: { label: 'Browse Support Plans', to: '/book-online' },
   };

@@ -40,7 +40,7 @@ export const logInLabel = 'Log In';
 export const chatLabel = 'Chat With Us';
 
 export const contact = {
-  email: 'admin@energyaftercare.co.uk',
+  email: 'info@energyaftercare.co.uk',
   phone: '+44 7943 812137',
   phoneHref: 'tel:+447943812137',
 };

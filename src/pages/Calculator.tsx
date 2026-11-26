@@ -1166,15 +1166,15 @@ export default function Calculator() {
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-ea-grey">Voltage Architecture</label>
+                        <label className="text-xs font-semibold text-ea-grey">Battery Voltage</label>
                         <select
                           value={qBattV}
                           onChange={(e) => setQBattV(e.target.value as any)}
                           className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm text-ea-white focus:border-ea-green focus:outline-none"
                         >
+                          <option value="LV">LV (Low Voltage)</option>
+                          <option value="HV">HV (High Voltage)</option>
                           <option value="">Not sure / Standard</option>
-                          <option value="HV">High Voltage (HV - e.g. SigEnergy, Tesla)</option>
-                          <option value="LV">Low Voltage (LV / 48V)</option>
                         </select>
                       </div>
                     </div>
@@ -1572,9 +1572,9 @@ export default function Calculator() {
                             onChange={(e) => setNBattV(e.target.value as any)}
                             className="mt-1.5 w-full rounded-xl border border-ea-grey/30 bg-ea-black px-4 py-2.5 text-sm text-ea-white focus:border-ea-green focus:outline-none"
                           >
-                            <option value="">No preference</option>
-                            <option value="HV">High Voltage (HV - higher efficiency)</option>
-                            <option value="LV">Low Voltage (LV - 48V)</option>
+                            <option value="LV">LV (Low Voltage)</option>
+                            <option value="HV">HV (High Voltage)</option>
+                            <option value="">Not sure / Standard</option>
                           </select>
                         </div>
                         <div>

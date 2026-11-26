@@ -14,9 +14,14 @@
     <script>
       (function() {
         var path = window.location.pathname;
-        if (path && path !== '/' && path !== '/index.html' && !window.location.hash) {
+        if (path && path.endsWith('.html')) {
           var clean = path.replace(/\.html$/, '');
-          window.location.replace('/#' + clean + window.location.search);
+          if (!clean) clean = '/';
+          window.history.replaceState(null, '', clean + window.location.search + window.location.hash);
+        }
+        if (window.location.hash && window.location.hash.startsWith('#/')) {
+          var hashClean = window.location.hash.slice(1);
+          window.history.replaceState(null, '', hashClean + window.location.search);
         }
       })();
     </script>

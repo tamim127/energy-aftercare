@@ -1,5 +1,6 @@
 // Wix Bookings Integration for Energy Aftercare Headless Frontend
-import { wixFetch } from './sdk';
+import { redirects } from '@wix/redirects';
+import { wixFetch, wixClient } from './sdk';
 import { ensureTokens } from './members/auth';
 import { submitInquiry } from './submissions';
 
@@ -319,6 +320,39 @@ export interface CreateCheckoutResult {
 export const WIX_BOOKINGS_APP_ID = '13d21c63-b5ec-5912-8397-c3a5ddb27a97';
 
 /**
+ * Obtains the official Wix-hosted secure payment checkout URL using Wix Redirects.
+ * Directs customers to the official Wix Payments / card / PayPal checkout screen.
+ */
+export async function getRedirectCheckoutUrl(checkoutId: string): Promise<string> {
+  await ensureTokens();
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.energyaftercare.co.uk';
+
+  try {
+    const session = await wixClient.use(redirects).createRedirectSession({
+      ecomCheckout: { checkoutId },
+      callbacks: {
+        postFlowUrl: `${origin}/#/book-online?payment=success`,
+        thankYouPageUrl: `${origin}/#/book-online?payment=success`,
+      },
+    });
+
+    if (session?.redirectSession?.fullUrl) {
+      return session.redirectSession.fullUrl;
+    }
+  } catch (err) {
+    console.warn('createRedirectSession failed, falling back to ecom checkout url:', err);
+  }
+
+  // Fallback to /ecom/v1/checkouts/${checkoutId}/checkout-url
+  const urlRes = await wixFetch(`/ecom/v1/checkouts/${checkoutId}/checkout-url`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const urlData = await urlRes.json();
+  return urlData?.checkoutUrl || `${origin}/#/checkout?checkoutId=${checkoutId}`;
+}
+
+/**
  * Creates a Wix eCommerce Checkout session for a created booking and retrieves
  * the hosted checkout URL where the customer can pay online via Wix Payments/Card/PayPal.
  */
@@ -353,24 +387,11 @@ export async function createBookingCheckout(bookingId: string): Promise<CreateCh
     }
 
     const checkoutId = checkoutData.checkout.id;
-
-    const urlRes = await wixFetch(`/ecom/v1/checkouts/${checkoutId}/checkout-url`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    const urlData = await urlRes.json();
-    if (!urlRes.ok || !urlData?.checkoutUrl) {
-      const msg = urlData?.message || urlData?.details?.applicationError?.description;
-      return {
-        success: false,
-        error: msg || 'Unable to generate checkout URL for payment.',
-      };
-    }
+    const checkoutUrl = await getRedirectCheckoutUrl(checkoutId);
 
     return {
       success: true,
-      checkoutUrl: urlData.checkoutUrl,
+      checkoutUrl,
     };
   } catch (err: any) {
     console.error('Failed to create booking checkout:', err);

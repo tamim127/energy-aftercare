@@ -79,7 +79,7 @@ export const termsContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "Email: Admin@energyaftercare.co.uk"
+      "text": "Email: info@energyaftercare.co.uk"
     },
     {
       "type": "h2",
@@ -1161,7 +1161,7 @@ export const termsContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "Email: Admin@energyaftercare.co.uk"
+      "text": "Email: info@energyaftercare.co.uk"
     },
     {
       "type": "p",

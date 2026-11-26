@@ -1,6 +1,6 @@
 // Wix Inquiries & CRM Submissions Service for Energy Aftercare Headless Frontend
 // Integrates forms directly with Wix Data Collection "Inquiries" and Wix CRM Contacts
-// Triggers automatic email & push notifications to site owner / collaborators (admin@energyaftercare.co.uk)
+// Triggers automatic email & push notifications to site owner / collaborators (info@energyaftercare.co.uk)
 
 import { wixFetch } from './sdk';
 import { ensureTokens } from './members/auth';
@@ -28,7 +28,7 @@ export interface SubmitInquiryResult {
 /**
  * Submits an inquiry to Wix Data Collection "Inquiries" and registers/upserts
  * the lead in Wix CRM Contacts. This triggers the configured Wix Automation
- * which notifies the client team (admin@energyaftercare.co.uk).
+ * which notifies the client team (info@energyaftercare.co.uk).
  */
 export async function submitInquiry(params: SubmitInquiryParams): Promise<SubmitInquiryResult> {
   const trimmedName = params.name.trim();
@@ -90,7 +90,7 @@ export async function submitInquiry(params: SubmitInquiryParams): Promise<Submit
 
     // 2. Register / Upsert Contact in Wix CRM Contacts
     // This action immediately activates Wix Automation:
-    // "Notify team when new lead or contact is created" -> sends notification to admin@energyaftercare.co.uk
+    // "Notify team when new lead or contact is created" -> sends notification to info@energyaftercare.co.uk
     try {
       const contactBody: Record<string, any> = {
         info: {

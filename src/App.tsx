@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { HashRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@project/components/ui/sonner';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
+import CookieConsent from './components/CookieConsent';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -14,13 +15,30 @@ import Login from './pages/Login';
 import InstallerSupport from './pages/InstallerSupport';
 import { ManufacturerSupport } from './pages/NewPages';
 import ApprovedInstallers from './pages/ApprovedInstallers';
+import Checkout from './pages/Checkout';
 import FAQ from './pages/FAQ';
 import { PrivacyPage, CookiePage, TermsPage } from './pages/Legal';
 import NotFound from './pages/NotFound';
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
+  const navigate = useNavigate();
+
   useEffect(() => {
+    // If loaded with legacy hash like /#/about
+    if (hash && hash.startsWith('#/')) {
+      const target = hash.slice(1);
+      navigate(target, { replace: true });
+      return;
+    }
+
+    // If pathname ends with .html, rewrite to clean path
+    if (pathname.endsWith('.html')) {
+      const clean = pathname.replace(/\.html$/, '') || '/';
+      navigate(clean, { replace: true });
+      return;
+    }
+
     if (hash) {
       const t = setTimeout(
         () => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
@@ -29,7 +47,7 @@ function ScrollManager() {
       return () => clearTimeout(t);
     }
     window.scrollTo(0, 0);
-  }, [pathname, hash]);
+  }, [pathname, hash, navigate]);
   return null;
 }
 
@@ -49,6 +67,7 @@ function Layout() {
       </main>
       <Footer />
       <ChatWidget />
+      <CookieConsent />
       <Toaster />
     </div>
   );
@@ -56,30 +75,46 @@ function Layout() {
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/about.html" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services.html" element={<Services />} />
           <Route path="/calculator" element={<Calculator />} />
+          <Route path="/calculator.html" element={<Calculator />} />
           <Route path="/book-online" element={<BookOnline />} />
+          <Route path="/book-online.html" element={<BookOnline />} />
           <Route path="/booking-calendar/:slug" element={<BookingCalendar />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout.html" element={<Checkout />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/login.html" element={<Login />} />
           <Route path="/installer-support" element={<InstallerSupport />} />
+          <Route path="/installer-support.html" element={<InstallerSupport />} />
           <Route path="/approved-installers" element={<ApprovedInstallers />} />
+          <Route path="/approved-installers.html" element={<ApprovedInstallers />} />
+          <Route path="/approved-Installers" element={<ApprovedInstallers />} />
+          <Route path="/Approved-Installers" element={<ApprovedInstallers />} />
           <Route path="/manufacturer-support" element={<ManufacturerSupport />} />
+          <Route path="/manufacturer-support.html" element={<ManufacturerSupport />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/faq.html" element={<FAQ />} />
           <Route path="/blank-6" element={<FAQ />} />
           <Route path="/privacy-policy" element={<PrivacyPage />} />
+          <Route path="/privacy-policy.html" element={<PrivacyPage />} />
           <Route path="/blank-3" element={<PrivacyPage />} />
           <Route path="/cookie-policy" element={<CookiePage />} />
+          <Route path="/cookie-policy.html" element={<CookiePage />} />
           <Route path="/blank-1" element={<CookiePage />} />
           <Route path="/terms-conditions" element={<TermsPage />} />
+          <Route path="/terms-conditions.html" element={<TermsPage />} />
           <Route path="/blank-2" element={<TermsPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }

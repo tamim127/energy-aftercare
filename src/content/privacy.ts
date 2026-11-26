@@ -34,7 +34,7 @@ export const privacyContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "Email: Admin@energyaftercare.co.uk"
+      "text": "Email: info@energyaftercare.co.uk"
     },
     {
       "type": "h2",
@@ -95,7 +95,7 @@ export const privacyContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "Data protection / privacy contact: Admin@energyaftercare.co.uk"
+      "text": "Data protection / privacy contact: info@energyaftercare.co.uk"
     },
     {
       "type": "p",
@@ -935,7 +935,7 @@ export const privacyContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "If you would like more information about international transfers relating to your data, you can contact us at Admin@energyaftercare.co.uk."
+      "text": "If you would like more information about international transfers relating to your data, you can contact us at info@energyaftercare.co.uk."
     },
     {
       "type": "h2",
@@ -1091,7 +1091,7 @@ export const privacyContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "Email: Admin@energyaftercare.co.uk"
+      "text": "Email: info@energyaftercare.co.uk"
     },
     {
       "type": "p",
@@ -1132,7 +1132,7 @@ export const privacyContent: LegalContent = {
     },
     {
       "type": "p",
-      "text": "If you believe that a child’s personal data has been provided to us without appropriate consent or oversight, please contact us at Admin@energyaftercare.co.uk so that we can review and, where appropriate, delete or restrict that data."
+      "text": "If you believe that a child’s personal data has been provided to us without appropriate consent or oversight, please contact us at info@energyaftercare.co.uk so that we can review and, where appropriate, delete or restrict that data."
     },
     {
       "type": "h2",
